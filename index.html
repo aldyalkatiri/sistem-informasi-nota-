@@ -3,81 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Nota - Admin</title>
+    <title>Login - Sistem Nota</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;
+            padding: 40px; width: 100%; max-width: 400px; color: white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); animation: zoomIn 0.6s ease;
+        }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .form-control { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: white; }
+        .form-control:focus { background: rgba(255, 255, 255, 0.2); color: white; box-shadow: none; border-color: #fff; }
+        .btn-login { background: #fff; color: #1e3a8a; font-weight: bold; border: none; transition: 0.3s; }
+        .btn-login:hover { background: #e2e8f0; transform: translateY(-3px); }
+    </style>
 </head>
 <body>
 
-<div class="container my-5">
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="header-panel text-center">
-            <h3 class="fw-bold">PANEL ADMIN: INPUT NOTA</h3>
-            <p class="mb-0 opacity-75">Sistem Pencatatan Perbaikan Pagi & Malam</p>
-        </div>
-        <div class="card-body p-4">
-            <form id="notaForm">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label fw-semibold">Jenis Perbaikan</label>
-                        <select id="kodeJenis" class="form-select" required>
-                            <option value="" selected disabled>Pilih Jenis...</option>
-                            <option value="SL">SL (BAN)</option>
-                            <option value="SD">SD (LAS)</option>
-                            <option value="SI">SI (MEKANIK PERAWATAN)</option>
-                            <option value="SX">SX (MEKANIK)</option>
-                            <option value="SY">SY (GRASSES)</option>
-                            <option value="SG">SG (ELEKTRIK)</option>
-                            <option value="ST">ST (PERAWATAN ALAT BERAT)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-semibold">Shift Kerja</label>
-                        <select id="shift" class="form-select" required>
-                            <option value="PAGI">PAGI</option>
-                            <option value="MALAM">MALAM</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-semibold">Jumlah Nota</label>
-                        <input type="number" id="jumlah" class="form-control" placeholder="Contoh: 5" required min="1">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 mt-4 py-2 fw-bold">SIMPAN DATA NOTA</button>
-            </form>
-        </div>
+<div class="login-card">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">SISTEM NOTA</h2>
+        <p class="opacity-75">Silakan Login</p>
     </div>
-
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold mb-0">Rincian Data Terkini</h4>
-                <button onclick="window.print()" class="btn btn-outline-dark btn-sm px-3">
-                    Cetak Laporan
-                </button>
-            </div>
-            
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="50">No</th>
-                            <th>Kode Nota</th>
-                            <th>Deskripsi Perbaikan</th>
-                            <th>Shift</th>
-                            <th>Jumlah</th>
-                            <th>Waktu Input</th>
-                            <th width="100" class="text-center action-col">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelNota">
-                        </tbody>
-                </table>
-            </div>
+    <form id="loginForm">
+        <div class="mb-3">
+            <label class="form-label small fw-bold">Username</label>
+            <input type="text" id="username" class="form-control" placeholder="admin / user" required>
         </div>
+        <div class="mb-4">
+            <label class="form-label small fw-bold">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="******" required>
+        </div>
+        <button type="submit" class="btn btn-login w-100 py-2">MASUK</button>
+    </form>
+    <div id="loginMessage" class="mt-3 text-center text-warning fw-bold" style="display: none; font-size: 0.9rem;">
+        Username atau Password salah!
     </div>
 </div>
 
-<script src="index.js"></script>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+
+        if ((user === 'admin' && pass === 'admin') || (user === 'user' && pass === 'user')) {
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('role', user);
+            window.location.href = 'dashboard.html';
+        } else {
+            const msg = document.getElementById('loginMessage');
+            msg.style.display = 'block';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        }
+    });
+</script>
 </body>
 </html>
