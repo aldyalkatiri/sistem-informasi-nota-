@@ -8,6 +8,58 @@ function logout() {
     sessionStorage.clear();
     window.location.href = 'index.html';
 }
+// Fungsi Export ke Excel
+function exportToExcel() {
+    // 1. Pilih tabel yang akan diekspor
+    const table = document.getElementById("tabelNota");
+    
+    // Cek jika tabel kosong
+    if (table.rows.length === 0) {
+        alert("Tidak ada data untuk diekspor!");
+        return;
+    }
+
+    // 2. Persiapkan data (Menghilangkan kolom "Aksi" agar tidak ikut ter-export)
+    const rows = [];
+    const headers = ["No", "Kode Nota", "Deskripsi", "Shift", "Jumlah", "Waktu Input"];
+    rows.push(headers);
+
+    // Ambil data dari tiap baris tabel
+    const trs = table.querySelectorAll("tr");
+    trs.forEach((tr, index) => {
+        const tds = tr.querySelectorAll("td");
+        const rowData = [
+            index + 1,                    // No
+            tds[1].innerText,             // Kode Nota
+            tds[2].innerText,             // Deskripsi
+            tds[3].innerText,             // Shift
+            tds[4].innerText.replace(' Nota', ''), // Jumlah (hanya angka)
+            tds[5].innerText              // Waktu
+        ];
+        rows.push(rowData);
+    });
+
+    // 3. Proses konversi ke Excel menggunakan SheetJS
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(rows);
+
+    // Atur lebar kolom agar rapi
+    const wscols = [
+        {wch: 5},  // No
+        {wch: 15}, // Kode Nota
+        {wch: 30}, // Deskripsi
+        {wch: 10}, // Shift
+        {wch: 10}, // Jumlah
+        {wch: 25}  // Waktu
+    ];
+    worksheet['!cols'] = wscols;
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Nota");
+
+    // 4. Download file
+    const fileName = `Laporan_Nota_${new Date().toLocaleDateString('id-ID')}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+}
 
 // Logic Tabel Nota
 document.getElementById('notaForm')?.addEventListener('submit', function(e) {
@@ -48,3 +100,4 @@ document.getElementById('notaForm')?.addEventListener('submit', function(e) {
 function updateNomor() {
     document.querySelectorAll('.row-num').forEach((cell, i) => cell.innerText = i + 1);
 }
+
