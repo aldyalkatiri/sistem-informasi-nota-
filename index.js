@@ -1,103 +1,102 @@
-// PROTEKSI HALAMAN: Cek jika belum login
+// 1. CEK LOGIN & ROLE
 if (sessionStorage.getItem('isLoggedIn') !== 'true') {
     window.location.href = 'index.html';
 }
 
-// Fitur Logout
+const userRole = sessionStorage.getItem('role');
+if (userRole === 'user') {
+    document.getElementById('adminPanel').style.display = 'none';
+}
+
+// 2. FUNGSI LOGOUT
 function logout() {
     sessionStorage.clear();
     window.location.href = 'index.html';
 }
-// Fungsi Export ke Excel
-function exportToExcel() {
-    // 1. Pilih tabel yang akan diekspor
-    const table = document.getElementById("tabelNota");
-    
-    // Cek jika tabel kosong
-    if (table.rows.length === 0) {
-        alert("Tidak ada data untuk diekspor!");
-        return;
-    }
 
-    // 2. Persiapkan data (Menghilangkan kolom "Aksi" agar tidak ikut ter-export)
-    const rows = [];
-    const headers = ["No", "Kode Nota", "Deskripsi", "Shift", "Jumlah", "Waktu Input"];
-    rows.push(headers);
+// 3. LOAD DATA DARI LOCAL STORAGE
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+});
 
-    // Ambil data dari tiap baris tabel
-    const trs = table.querySelectorAll("tr");
-    trs.forEach((tr, index) => {
-        const tds = tr.querySelectorAll("td");
-        const rowData = [
-            index + 1,                    // No
-            tds[1].innerText,             // Kode Nota
-            tds[2].innerText,             // Deskripsi
-            tds[3].innerText,             // Shift
-            tds[4].innerText.replace(' Nota', ''), // Jumlah (hanya angka)
-            tds[5].innerText              // Waktu
-        ];
-        rows.push(rowData);
-    });
-
-    // 3. Proses konversi ke Excel menggunakan SheetJS
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(rows);
-
-    // Atur lebar kolom agar rapi
-    const wscols = [
-        {wch: 5},  // No
-        {wch: 15}, // Kode Nota
-        {wch: 30}, // Deskripsi
-        {wch: 10}, // Shift
-        {wch: 10}, // Jumlah
-        {wch: 25}  // Waktu
-    ];
-    worksheet['!cols'] = wscols;
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Nota");
-
-    // 4. Download file
-    const fileName = `Laporan_Nota_${new Date().toLocaleDateString('id-ID')}.xlsx`;
-    XLSX.writeFile(workbook, fileName);
-}
-
-// Logic Tabel Nota
+// 4. INPUT DATA
 document.getElementById('notaForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const selectJenis = document.getElementById('kodeJenis');
-    const shift = document.getElementById('shift').value;
-    const jumlah = document.getElementById('jumlah').value;
-    const kode = selectJenis.value;
-    const deskripsi = selectJenis.options[selectJenis.selectedIndex].text;
-    const waktu = new Date().toLocaleString('id-ID', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short' });
+    const select = document.getElementById('kodeJenis');
+    const data = {
+        id: Date.now(),
+        kode: select.value,
+        deskripsi: select.options[select.selectedIndex].text,
+        shift: document.getElementById('shift').value,
+        jumlah: document.getElementById('jumlah').value,
+        waktu: new Date().toLocaleString('id-ID', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})
+    };
 
-    const tabel = document.getElementById('tabelNota');
-    const row = document.createElement('tr');
-    row.className = 'new-row';
-    
-    row.innerHTML = `
-        <td class="fw-bold row-num"></td>
-        <td><span class="badge bg-primary">${kode}-${shift}</span></td>
-        <td>${deskripsi}</td>
-        <td><span class="badge ${shift === 'PAGI' ? 'badge-pagi' : 'badge-malam'}">${shift}</span></td>
-        <td class="fw-bold text-center">${jumlah}</td>
-        <td><small>${waktu}</small></td>
-        <td class="text-center action-col">
-            <button class="btn btn-danger btn-sm py-0 px-2 btn-hapus" style="font-size:11px">Hapus</button>
-        </td>
-    `;
-
-    row.querySelector('.btn-hapus').addEventListener('click', function() {
-        if(confirm('Hapus data ini?')) { row.remove(); updateNomor(); }
-    });
-
-    tabel.prepend(row);
-    updateNomor();
+    saveData(data);
     this.reset();
 });
 
-function updateNomor() {
-    document.querySelectorAll('.row-num').forEach((cell, i) => cell.innerText = i + 1);
+// 5. FUNGSI SIMPAN & HAPUS LOCAL STORAGE
+function saveData(data) {
+    let list = JSON.parse(localStorage.getItem('db_nota')) || [];
+    list.push(data);
+    localStorage.setItem('db_nota', JSON.stringify(list));
+    loadData();
 }
 
+function deleteData(id) {
+    if (confirm("Hapus data ini secara permanen?")) {
+        let list = JSON.parse(localStorage.getItem('db_nota')) || [];
+        list = list.filter(item => item.id !== id);
+        localStorage.setItem('db_nota', JSON.stringify(list));
+        loadData();
+    }
+}
+
+// 6. TAMPILKAN DATA KE TABEL
+function loadData() {
+    const tabel = document.getElementById('tabelNota');
+    if (!tabel) return;
+    tabel.innerHTML = '';
+    
+    let list = JSON.parse(localStorage.getItem('db_nota')) || [];
+    
+    // Sortir data terbaru di atas
+    list.reverse().forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = 'new-row';
+        row.innerHTML = `
+            <td class="text-center fw-bold">${index + 1}</td>
+            <td><span class="badge bg-primary px-3">${item.kode}-${item.shift}</span></td>
+            <td>${item.deskripsi}</td>
+            <td><span class="badge ${item.shift === 'PAGI' ? 'badge-pagi' : 'badge-malam'}">${item.shift}</span></td>
+            <td class="text-center fw-bold">${item.jumlah}</td>
+            <td><small class="text-muted">${item.waktu}</small></td>
+            <td class="text-center action-col">
+                ${userRole === 'admin' ? `<button onclick="deleteData(${item.id})" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>` : '-'}
+            </td>
+        `;
+        tabel.appendChild(row);
+    });
+}
+
+// 7. EXPORT EXCEL
+function exportToExcel() {
+    let list = JSON.parse(localStorage.getItem('db_nota')) || [];
+    if (list.length === 0) return alert("Data kosong!");
+
+    const excelData = list.map((item, i) => ({
+        "No": i + 1,
+        "Kode Nota": `${item.kode}-${item.shift}`,
+        "Deskripsi": item.deskripsi,
+        "Shift": item.shift,
+        "Jumlah": item.jumlah,
+        "Waktu Input": item.waktu
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan Nota");
+    XLSX.writeFile(wb, `Laporan_Nota_AliAkatiri.xlsx`);
+}
