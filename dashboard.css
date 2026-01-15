@@ -35,6 +35,24 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Warna tombol excel */
+.btn-success {
+    background-color: #198754;
+    border: none;
+    font-weight: 600;
+}
+
+.btn-success:hover {
+    background-color: #146c43;
+}
+
+/* Sembunyikan saat print */
+@media print {
+    .btn-group, .btn-success {
+        display: none !important;
+    }
+}
+
 /* Tombol Hapus */
 .btn-hapus {
     color: #dc3545;
