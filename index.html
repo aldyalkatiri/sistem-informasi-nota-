@@ -8,39 +8,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="login-body">
 
-    <div class="login-wrapper">
-        <div class="login-card">
-            <div class="brand-icon">
-                <i class="fas fa-file-invoice"></i>
+    <div class="login-card">
+        <div class="brand-icon">
+            <i class="fas fa-file-invoice-dollar"></i>
+        </div>
+        <h2 class="fw-bold text-white">SISTEM NOTA</h2>
+        <p class="text-white-50 mb-4">Silakan login untuk mengelola data</p>
+
+        <form id="loginForm">
+            <div class="input-group-custom mb-3">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" placeholder="Username" required autocomplete="off">
             </div>
-            
-            <h2 class="login-title">Selamat Datang</h2>
-            <p class="login-subtitle">Silakan masuk ke akun Anda</p>
-
-            <form id="loginForm">
-                <div class="input-group-custom">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="username" placeholder="Username" required>
-                </div>
-
-                <div class="input-group-custom">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Password" required>
-                </div>
-
-                <button type="submit" class="btn-login">
-                    <span>MASUK</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
-
-            <div id="loginMessage" class="error-msg">Username atau Password salah!</div>
-
-            <div class="footer-credit">
-                Powered by <span>Ali Akatiri</span>
+            <div class="input-group-custom mb-4">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Password" required>
             </div>
+            <button type="submit" class="btn-login w-100">
+                MASUK <i class="fas fa-sign-in-alt ms-2"></i>
+            </button>
+        </form>
+        
+        <div id="loginMessage" class="error-msg mt-3">Username atau Password salah!</div>
+
+        <div class="footer-credit mt-4">
+            Powered by <span>Ali Akatiri</span>
         </div>
     </div>
 
@@ -52,13 +46,12 @@
 
             if ((user === 'admin' && pass === 'admin') || (user === 'user' && pass === 'user')) {
                 sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('role', user);
                 window.location.href = 'dashboard.html';
             } else {
                 const msg = document.getElementById('loginMessage');
                 msg.style.display = 'block';
-                // Animasi getar jika salah
-                document.querySelector('.login-card').classList.add('shake');
-                setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
+                setTimeout(() => msg.style.display = 'none', 3000);
             }
         });
     </script>
