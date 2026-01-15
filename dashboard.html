@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistem Nota</title>
+    <title>Dashboard | Sistem Informasi Nota</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark shadow-sm">
+<nav class="navbar navbar-dark shadow-sm">
     <div class="container">
-        <span class="navbar-brand fw-bold">Sistem Informasi Nota</span>
-        <button onclick="logout()" class="btn btn-outline-danger btn-sm fw-bold px-3">LOGOUT</button>
+        <span class="navbar-brand fw-bold"><i class="fas fa-database me-2"></i> SISTEM INFORMASI NOTA</span>
+        <button onclick="logout()" class="btn btn-danger btn-sm px-3 fw-bold"><i class="fas fa-power-off me-1"></i> LOGOUT</button>
     </div>
 </nav>
 
 <div class="container my-5">
-    <div id="adminPanel" class="card mb-4 border-0 shadow-sm">
+    <div id="adminPanel" class="card mb-4 border-0 shadow">
         <div class="header-panel text-center">
-            <h3 class="fw-bold mb-0">INPUT NOTA PERBAIKAN</h3>
+            <h4 class="fw-bold mb-0">INPUT DATA NOTA BARU</h4>
         </div>
         <div class="card-body p-4">
             <form id="notaForm">
@@ -27,6 +28,7 @@
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Jenis Perbaikan</label>
                         <select id="kodeJenis" class="form-select" required>
+                            <option value="" disabled selected>Pilih Jenis...</option>
                             <option value="SL">SL (BAN)</option>
                             <option value="SD">SD (LAS)</option>
                             <option value="SI">SI (MEKANIK PERAWATAN)</option>
@@ -37,61 +39,64 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label fw-bold">Shift</label>
+                        <label class="form-label fw-bold">Shift Kerja</label>
                         <select id="shift" class="form-select" required>
                             <option value="PAGI">PAGI</option>
                             <option value="MALAM">MALAM</option>
                         </select>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold mb-0">Rincian Data Nota</h4>
-    <div class="btn-group">
-        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm px-3">Cetak</button>
-        <button onclick="exportToExcel()" class="btn btn-success btn-sm px-3">
-            <i class="fas fa-file-excel me-1"></i> Export Excel
-        </button>
-    </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="index.js"></script>
                     <div class="col-md-4">
-                        <label class="form-label fw-bold">Jumlah</label>
-                        <input type="number" id="jumlah" class="form-control" placeholder="Angka" required min="1">
+                        <label class="form-label fw-bold">Jumlah Nota</label>
+                        <input type="number" id="jumlah" class="form-control" placeholder="0" required min="1">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 mt-4 py-2 fw-bold shadow">SIMPAN DATA</button>
+                <button type="submit" class="btn btn-primary w-100 mt-4 py-2 fw-bold shadow-sm">
+                    <i class="fas fa-save me-1"></i> SIMPAN DATA NOTA
+                </button>
             </form>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
+    <div class="card border-0 shadow">
+        <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold mb-0">Rincian Data Nota</h4>
-                <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">Cetak</button>
+                <h4 class="fw-bold mb-0 text-dark">Rincian Data Nota</h4>
+                <div class="btn-group">
+                    <button onclick="window.print()" class="btn btn-outline-dark btn-sm px-3">
+                        <i class="fas fa-print me-1"></i> Cetak PDF
+                    </button>
+                    <button onclick="exportToExcel()" class="btn btn-success btn-sm px-3">
+                        <i class="fas fa-file-excel me-1"></i> Export Excel
+                    </button>
+                </div>
             </div>
+            
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>No</th>
+                            <th width="50" class="text-center">No</th>
                             <th>Kode Nota</th>
-                            <th>Deskripsi</th>
+                            <th>Deskripsi Perbaikan</th>
                             <th>Shift</th>
-                            <th>Jumlah</th>
-                            <th>Waktu</th>
+                            <th class="text-center">Jumlah</th>
+                            <th>Waktu Input</th>
                             <th class="text-center action-col">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelNota"></tbody>
+                    <tbody id="tabelNota">
+                        </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <footer class="text-center mt-5">
+        <p class="text-muted small">Powered by <span class="fw-bold text-dark">Ali Akatiri</span></p>
+    </footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="index.js"></script>
 </body>
-
 </html>
-
