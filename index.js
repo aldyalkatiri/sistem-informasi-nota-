@@ -1,67 +1,50 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Sistem Informasi Nota</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+// PROTEKSI HALAMAN: Cek jika belum login
+if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+    window.location.href = 'index.html';
+}
 
-    <div class="login-wrapper">
-        <div class="login-card">
-            <div class="brand-icon">
-                <i class="fas fa-file-invoice"></i>
-            </div>
-            
-            <h2 class="login-title">Selamat Datang</h2>
-            <p class="login-subtitle">Silakan masuk ke akun Anda</p>
+// Fitur Logout
+function logout() {
+    sessionStorage.clear();
+    window.location.href = 'index.html';
+}
 
-            <form id="loginForm">
-                <div class="input-group-custom">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="username" placeholder="Username" required>
-                </div>
+// Logic Tabel Nota
+document.getElementById('notaForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
 
-                <div class="input-group-custom">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Password" required>
-                </div>
+    const selectJenis = document.getElementById('kodeJenis');
+    const shift = document.getElementById('shift').value;
+    const jumlah = document.getElementById('jumlah').value;
+    const kode = selectJenis.value;
+    const deskripsi = selectJenis.options[selectJenis.selectedIndex].text;
+    const waktu = new Date().toLocaleString('id-ID', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short' });
 
-                <button type="submit" class="btn-login">
-                    <span>MASUK</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
+    const tabel = document.getElementById('tabelNota');
+    const row = document.createElement('tr');
+    row.className = 'new-row';
+    
+    row.innerHTML = `
+        <td class="fw-bold row-num"></td>
+        <td><span class="badge bg-primary">${kode}-${shift}</span></td>
+        <td>${deskripsi}</td>
+        <td><span class="badge ${shift === 'PAGI' ? 'badge-pagi' : 'badge-malam'}">${shift}</span></td>
+        <td class="fw-bold text-center">${jumlah}</td>
+        <td><small>${waktu}</small></td>
+        <td class="text-center action-col">
+            <button class="btn btn-danger btn-sm py-0 px-2 btn-hapus" style="font-size:11px">Hapus</button>
+        </td>
+    `;
 
-            <div id="loginMessage" class="error-msg">Username atau Password salah!</div>
+    row.querySelector('.btn-hapus').addEventListener('click', function() {
+        if(confirm('Hapus data ini?')) { row.remove(); updateNomor(); }
+    });
 
-            <div class="footer-credit">
-                Powered by <span>Ali Akatiri</span>
-            </div>
-        </div>
-    </div>
+    tabel.prepend(row);
+    updateNomor();
+    this.reset();
+});
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-
-            if ((user === 'admin' && pass === 'admin') || (user === 'user' && pass === 'user')) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                window.location.href = 'dashboard.html';
-            } else {
-                const msg = document.getElementById('loginMessage');
-                msg.style.display = 'block';
-                // Animasi getar jika salah
-                document.querySelector('.login-card').classList.add('shake');
-                setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
-            }
-        });
-    </script>
-</body>
-</html>
-
+function updateNomor() {
+    document.querySelectorAll('.row-num').forEach((cell, i) => cell.innerText = i + 1);
+}
