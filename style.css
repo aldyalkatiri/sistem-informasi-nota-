@@ -1,61 +1,11 @@
-/* style.css */
-body {
-    background-color: #f1f3f5;
-    font-family: 'Inter', sans-serif;
-}
+body { background: #f4f7f9; font-family: sans-serif; }
+.header-panel { background: #1e3a8a; color: white; padding: 20px; border-radius: 10px 10px 0 0; }
+.badge-pagi { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+.badge-malam { background: #1e293b; color: #fff; }
+.new-row { animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.header-panel {
-    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-    color: white;
-    padding: 30px;
-    border-radius: 12px 12px 0 0;
-}
-
-/* Badge Styling */
-.badge-pagi {
-    background-color: #fef3c7;
-    color: #92400e;
-    border: 1px solid #f59e0b;
-    padding: 6px 12px;
-}
-
-.badge-malam {
-    background-color: #1e293b;
-    color: #f8fafc;
-    padding: 6px 12px;
-}
-
-/* Animasi Baris Baru */
-.new-row {
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Tombol Hapus */
-.btn-hapus {
-    color: #dc3545;
-    background: none;
-    border: 1px solid #dc3545;
-    transition: 0.3s;
-}
-
-.btn-hapus:hover {
-    background: #dc3545;
-    color: white;
-}
-
-/* Pengaturan Cetak */
 @media print {
-    .btn, #notaForm, .action-col, .header-panel p {
-        display: none !important;
-    }
-    .card {
-        border: 1px solid #ddd !important;
-        box-shadow: none !important;
-    }
-    body { background: white; }
+    .action-col, #adminPanel, .navbar, .btn { display: none !important; }
+    .card { border: none !important; box-shadow: none !important; }
 }
