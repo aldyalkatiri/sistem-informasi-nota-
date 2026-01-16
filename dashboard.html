@@ -13,7 +13,7 @@
 <nav class="navbar navbar-dark shadow-sm">
     <div class="container">
         <span class="navbar-brand fw-bold"><i class="fas fa-database me-2"></i> SISTEM INFORMASI NOTA</span>
-        <button onclick="logout()" class="btn btn-danger btn-sm px-3 fw-bold"><i class="fas fa-power-off me-1"></i> LOGOUT</button>
+        <button onclick="logout()" class="btn btn-danger btn-sm px-3 fw-bold">LOGOUT</button>
     </div>
 </nav>
 
@@ -25,7 +25,11 @@
         <div class="card-body p-4">
             <form id="notaForm">
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Tanggal Nota</label>
+                        <input type="date" id="tanggalNota" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Jenis Perbaikan</label>
                         <select id="kodeJenis" class="form-select" required>
                             <option value="" disabled selected>Pilih Jenis...</option>
@@ -38,14 +42,14 @@
                             <option value="ST">ST (PERAWATAN ALAT BERAT)</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Shift Kerja</label>
                         <select id="shift" class="form-select" required>
                             <option value="PAGI">PAGI</option>
                             <option value="MALAM">MALAM</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Jumlah Nota</label>
                         <input type="number" id="jumlah" class="form-control" placeholder="0" required min="1">
                     </div>
@@ -62,20 +66,16 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold mb-0 text-dark">Rincian Data Nota</h4>
                 <div class="btn-group">
-                    <button onclick="window.print()" class="btn btn-outline-dark btn-sm px-3">
-                        <i class="fas fa-print me-1"></i> Cetak PDF
-                    </button>
-                    <button onclick="exportToExcel()" class="btn btn-success btn-sm px-3">
-                        <i class="fas fa-file-excel me-1"></i> Export Excel
-                    </button>
+                    <button onclick="window.print()" class="btn btn-outline-dark btn-sm px-3"><i class="fas fa-print"></i> Cetak PDF</button>
+                    <button onclick="exportToExcel()" class="btn btn-success btn-sm px-3"><i class="fas fa-file-excel"></i> Excel</button>
                 </div>
             </div>
-            
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th width="50" class="text-center">No</th>
+                            <th>Tanggal Nota</th>
                             <th>Kode Nota</th>
                             <th>Deskripsi Perbaikan</th>
                             <th>Shift</th>
@@ -84,13 +84,11 @@
                             <th class="text-center action-col">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelNota">
-                        </tbody>
+                    <tbody id="tabelNota"></tbody>
                 </table>
             </div>
         </div>
     </div>
-
     <footer class="text-center mt-5">
         <p class="text-muted small">Powered by <span class="fw-bold text-dark">Ali Akatiri</span></p>
     </footer>
@@ -100,4 +98,3 @@
 <script src="index.js"></script>
 </body>
 </html>
-
