@@ -3,12 +3,12 @@
 
 /* 1. Root Variables & Reset */
 :root {
-    --primary: #1e3a8a;    /* Deep Blue */
-    --secondary: #3b82f6;  /* Blue Bright */
-    --dark: #0f172a;       /* Slate Dark */
-    --light: #f8fafc;      /* Background Light */
-    --warning: #f59e0b;    /* Orange/Yellow */
-    --success: #10b981;    /* Green */
+    --primary: #1e3a8a;    /* Biru Tua */
+    --secondary: #3b82f6;  /* Biru Terang */
+    --dark: #0f172a;       /* Hitam Slate */
+    --light: #f8fafc;      /* Abu Putih */
+    --warning: #f59e0b;    /* Oranye/Kuning */
+    --success: #10b981;    /* Hijau */
 }
 
 * {
@@ -47,7 +47,7 @@ body {
     text-align: center;
 }
 
-/* 4. Statistik Cards (Top Row) */
+/* 4. Statistik Cards (Top Row - 4 Kolom) */
 .stat-card-total { 
     background: linear-gradient(135deg, var(--primary), var(--secondary)); 
     color: white; 
@@ -64,29 +64,17 @@ body {
     color: white; 
 }
 
-.stat-card-total small, .stat-card-malam small {
+.stat-card-qty { 
+    background: var(--success); 
+    color: white; 
+}
+
+.stat-card-total small, .stat-card-malam small, .stat-card-qty small {
     opacity: 0.8;
     font-weight: 600;
 }
 
-/* 5. Category Summary Badges (Feature Baru) */
-.category-badge {
-    background: white;
-    border-left: 4px solid var(--secondary);
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-top: 1px solid #eee;
-    border-right: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-}
-
-/* 6. Form Styling */
+/* 5. Form Styling */
 .form-label {
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -99,7 +87,7 @@ body {
     border: 1px solid #cbd5e1;
     border-radius: 10px;
     padding: 0.6rem 1rem;
-    color: var(--dark) !important; /* Fix: Teks input selalu gelap */
+    color: var(--dark) !important; /* Memastikan teks input selalu gelap dan terbaca */
 }
 
 .form-control:focus, .form-select:focus {
@@ -121,7 +109,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* 7. Table Styling (Fix Teks Hilang di Gambar) */
+/* 6. Table Styling (Fix Teks Hilang) */
 .table thead th {
     background-color: var(--dark) !important;
     color: white !important;
@@ -132,16 +120,16 @@ body {
 }
 
 #tabelNota td {
-    color: var(--dark) !important; /* Fix: Pastikan teks baris selalu terlihat */
+    color: var(--dark) !important; /* Memastikan teks baris tabel selalu terlihat tajam */
     padding: 1rem;
     vertical-align: middle;
     border-bottom: 1px solid #f1f5f9;
 }
 
-/* 8. Badge Shift (Sesuai Koreksi Visual) */
+/* 7. Badge Shift (Kontras Tinggi) */
 .badge-pagi {
-    background-color: #fef3c7 !important; /* Soft Yellow */
-    color: #92400e !important;            /* Dark Brown/Orange */
+    background-color: #fef3c7 !important; /* Kuning Lembut */
+    color: #92400e !important;            /* Cokelat Tua agar kontras dengan kuning */
     border: 1px solid var(--warning) !important;
     padding: 0.5rem 1rem;
     border-radius: 8px;
@@ -149,14 +137,14 @@ body {
 }
 
 .badge-malam {
-    background-color: #1e293b !important; /* Very Dark Blue */
-    color: #ffffff !important;            /* White Text */
+    background-color: #1e293b !important; /* Biru Gelap */
+    color: #ffffff !important;            /* Teks Putih Murni */
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-weight: 700;
 }
 
-/* 9. Search & Utility */
+/* 8. Utility Classes */
 .bg-light.rounded-pill {
     background-color: #f1f5f9 !important;
 }
@@ -166,10 +154,10 @@ body {
 }
 
 .action-col button:hover {
-    color: #be123c !important;
+    color: #be123c !important; /* Merah saat hover tombol hapus */
 }
 
-/* 10. Print Optimization */
+/* 9. Optimasi Cetak */
 @media print {
     .navbar, #adminPanel, .action-col, .btn-group, #cariData, footer {
         display: none !important;
