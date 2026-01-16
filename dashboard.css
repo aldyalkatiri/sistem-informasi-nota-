@@ -1,4 +1,4 @@
-/* dashboard.css - Final Refined Version */
+/* dashboard.css - FINAL VERSION ALI AKATIRI */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
 :root {
@@ -12,62 +12,72 @@
 body {
     background-color: var(--light);
     font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--dark);
 }
 
-/* Navbar & Header */
+/* NAVBAR & CARDS */
 .navbar { background: var(--primary) !important; border-bottom: 4px solid var(--secondary); }
-.header-panel { background: var(--primary) !important; border-radius: 12px 12px 0 0; }
-
-/* Form & Input */
 .card { border-radius: 15px; border: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.header-panel { background: var(--primary) !important; color: white !important; border-radius: 15px 15px 0 0; }
+
+/* STATISTIK CARDS */
+.stat-card-total { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+.stat-card-pagi { background: white; border: 1px solid #e2e8f0; color: var(--dark); }
+.stat-card-malam { background: var(--dark); color: white; }
+
+/* FORM INPUT - Memastikan teks input berwarna gelap */
 .form-control, .form-select { 
-    background-color: #ffffff; 
     border: 1px solid #cbd5e1; 
+    border-radius: 10px;
     color: var(--dark) !important;
+    padding: 10px;
 }
 
-/* Perbaikan Tombol Simpan agar tidak mepet */
 .btn-save {
-    padding: 12px !important;
+    padding: 14px !important;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    background-color: var(--primary);
+    letter-spacing: 1px;
+    background: var(--primary);
     border: none;
+    border-radius: 10px;
     transition: 0.3s;
 }
-.btn-save:hover { background-color: var(--dark); transform: translateY(-2px); }
+.btn-save:hover { background: var(--dark); transform: translateY(-2px); }
 
-/* TABEL & FIX WARNA TEKS (Solusi untuk Gambar Anda) */
+/* TABEL - PERBAIKAN WARNA TEKS (SESUAI GAMBAR) */
 .table thead th {
     background-color: var(--dark) !important;
     color: white !important;
-    text-transform: uppercase;
-    font-size: 12px;
+    font-size: 13px;
+    padding: 15px;
 }
 
 #tabelNota td {
-    color: var(--dark) !important; /* Memastikan semua teks di baris tabel berwarna gelap */
+    color: var(--dark) !important; /* Memaksa teks tabel agar tidak putih */
     font-weight: 500;
+    padding: 12px;
 }
 
-/* Badge Shift - Fix Teks Putih yang Hilang */
+/* BADGE SHIFT - SOLUSI TEXT TIDAK TERLIHAT */
 .badge-pagi {
     background-color: #fef3c7 !important; /* Kuning background */
-    color: #92400e !important;            /* Teks Coklat Tua (Kontras) */
+    color: #92400e !important;            /* Teks Coklat Tua (Sangat Kontras) */
     border: 1px solid var(--warning) !important;
-    padding: 6px 12px;
-    border-radius: 8px;
+    padding: 8px 15px;
+    font-weight: 700;
 }
 
 .badge-malam {
     background-color: #1e293b !important; /* Biru Tua background */
-    color: #ffffff !important;            /* Teks Putih murni */
-    padding: 6px 12px;
-    border-radius: 8px;
+    color: #ffffff !important;            /* Teks Putih Murni */
+    padding: 8px 15px;
+    font-weight: 700;
 }
 
-/* Animasi Baris Baru */
-.new-row { animation: fadeIn 0.5s ease-in-out; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-@media print { .navbar, #adminPanel, .action-col, .btn-group, footer { display: none !important; } }
+/* SEARCH BAR */
+.input-group-search {
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
