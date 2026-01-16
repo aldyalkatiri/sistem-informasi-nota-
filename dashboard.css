@@ -1,83 +1,179 @@
-/* dashboard.css - FINAL VERSION ALI AKATIRI */
+/* dashboard.css - FINAL VERSION (Ali Akatiri) */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
+/* 1. Root Variables & Reset */
 :root {
-    --primary: #1e3a8a;
-    --secondary: #3b82f6;
-    --dark: #0f172a;
-    --light: #f8fafc;
-    --warning: #f59e0b;
+    --primary: #1e3a8a;    /* Deep Blue */
+    --secondary: #3b82f6;  /* Blue Bright */
+    --dark: #0f172a;       /* Slate Dark */
+    --light: #f8fafc;      /* Background Light */
+    --warning: #f59e0b;    /* Orange/Yellow */
+    --success: #10b981;    /* Green */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     background-color: var(--light);
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--dark);
+    line-height: 1.6;
 }
 
-/* NAVBAR & CARDS */
-.navbar { background: var(--primary) !important; border-bottom: 4px solid var(--secondary); }
-.card { border-radius: 15px; border: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-.header-panel { background: var(--primary) !important; color: white !important; border-radius: 15px 15px 0 0; }
+/* 2. Navbar Styling */
+.navbar {
+    background: var(--primary) !important;
+    border-bottom: 4px solid var(--secondary);
+    padding: 1rem 0;
+}
 
-/* STATISTIK CARDS */
-.stat-card-total { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
-.stat-card-pagi { background: white; border: 1px solid #e2e8f0; color: var(--dark); }
-.stat-card-malam { background: var(--dark); color: white; }
+/* 3. Card & Header Styling */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
 
-/* FORM INPUT - Memastikan teks input berwarna gelap */
-.form-control, .form-select { 
-    border: 1px solid #cbd5e1; 
+.header-panel {
+    background: var(--primary) !important;
+    color: white !important;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+/* 4. Statistik Cards (Top Row) */
+.stat-card-total { 
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+    color: white; 
+}
+
+.stat-card-pagi { 
+    background: white; 
+    border: 1px solid #e2e8f0; 
+    color: var(--dark); 
+}
+
+.stat-card-malam { 
+    background: var(--dark); 
+    color: white; 
+}
+
+.stat-card-total small, .stat-card-malam small {
+    opacity: 0.8;
+    font-weight: 600;
+}
+
+/* 5. Category Summary Badges (Feature Baru) */
+.category-badge {
+    background: white;
+    border-left: 4px solid var(--secondary);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid #eee;
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+/* 6. Form Styling */
+.form-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    color: #64748b;
+}
+
+.form-control, .form-select {
+    border: 1px solid #cbd5e1;
     border-radius: 10px;
-    color: var(--dark) !important;
-    padding: 10px;
+    padding: 0.6rem 1rem;
+    color: var(--dark) !important; /* Fix: Teks input selalu gelap */
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .btn-save {
-    padding: 14px !important;
-    font-weight: 700;
-    letter-spacing: 1px;
     background: var(--primary);
     border: none;
+    padding: 12px;
+    font-weight: 700;
     border-radius: 10px;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
-.btn-save:hover { background: var(--dark); transform: translateY(-2px); }
 
-/* TABEL - PERBAIKAN WARNA TEKS (SESUAI GAMBAR) */
+.btn-save:hover {
+    background: var(--dark);
+    transform: translateY(-2px);
+}
+
+/* 7. Table Styling (Fix Teks Hilang di Gambar) */
 .table thead th {
     background-color: var(--dark) !important;
     color: white !important;
-    font-size: 13px;
-    padding: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 1rem;
+    border: none;
 }
 
 #tabelNota td {
-    color: var(--dark) !important; /* Memaksa teks tabel agar tidak putih */
-    font-weight: 500;
-    padding: 12px;
+    color: var(--dark) !important; /* Fix: Pastikan teks baris selalu terlihat */
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-/* BADGE SHIFT - SOLUSI TEXT TIDAK TERLIHAT */
+/* 8. Badge Shift (Sesuai Koreksi Visual) */
 .badge-pagi {
-    background-color: #fef3c7 !important; /* Kuning background */
-    color: #92400e !important;            /* Teks Coklat Tua (Sangat Kontras) */
+    background-color: #fef3c7 !important; /* Soft Yellow */
+    color: #92400e !important;            /* Dark Brown/Orange */
     border: 1px solid var(--warning) !important;
-    padding: 8px 15px;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
     font-weight: 700;
 }
 
 .badge-malam {
-    background-color: #1e293b !important; /* Biru Tua background */
-    color: #ffffff !important;            /* Teks Putih Murni */
-    padding: 8px 15px;
+    background-color: #1e293b !important; /* Very Dark Blue */
+    color: #ffffff !important;            /* White Text */
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
     font-weight: 700;
 }
 
-/* SEARCH BAR */
-.input-group-search {
-    background: white;
-    border-radius: 25px;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
+/* 9. Search & Utility */
+.bg-light.rounded-pill {
+    background-color: #f1f5f9 !important;
+}
+
+.action-col button {
+    transition: color 0.2s;
+}
+
+.action-col button:hover {
+    color: #be123c !important;
+}
+
+/* 10. Print Optimization */
+@media print {
+    .navbar, #adminPanel, .action-col, .btn-group, #cariData, footer {
+        display: none !important;
+    }
+    body { background: white; }
+    .card { box-shadow: none; border: 1px solid #eee; }
 }
