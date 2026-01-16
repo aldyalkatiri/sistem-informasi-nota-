@@ -1,86 +1,73 @@
-/* dashboard.css - Sinkronisasi Warna Ali Akatiri */
+/* dashboard.css - Final Refined Version */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
 :root {
-    --primary: #1e3a8a;    /* Biru Tua */
-    --secondary: #3b82f6;  /* Biru Terang */
-    --dark: #0f172a;       /* Hitam Slate */
-    --light: #f8fafc;      /* Abu Putih */
-    --warning: #f59e0b;    /* Oranye/Kuning */
+    --primary: #1e3a8a;
+    --secondary: #3b82f6;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --warning: #f59e0b;
 }
 
 body {
     background-color: var(--light);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    color: var(--dark);
 }
 
-/* Navbar Tetap Konsisten Biru Tua */
-.navbar {
-    background: var(--primary) !important;
-    border-bottom: 3px solid var(--secondary);
-}
+/* Navbar & Header */
+.navbar { background: var(--primary) !important; border-bottom: 4px solid var(--secondary); }
+.header-panel { background: var(--primary) !important; border-radius: 12px 12px 0 0; }
 
-/* Kartu Statistik - Menghilangkan warna putih yang tidak sinkron */
-.stat-card-total { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
-.stat-card-pagi { background: white; border: 1px solid #e2e8f0; color: var(--dark); }
-.stat-card-malam { background: var(--dark); color: white; }
-
-/* Panel Input */
-.header-panel {
-    background: var(--primary) !important;
-    color: white !important;
-}
-
-.card {
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Perbaikan Warna Input agar tidak "mati" */
-.form-control, .form-select {
-    border: 1px solid #e2e8f0;
-    background-color: white;
-    color: var(--dark);
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: var(--secondary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-/* Tabel Styling */
-.table-dark {
-    background-color: var(--dark) !important;
-}
-
-.table thead th {
-    border: none;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-}
-
-/* Badge Warna untuk Shift */
-.badge-pagi {
-    background-color: var(--warning) !important;
+/* Form & Input */
+.card { border-radius: 15px; border: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.form-control, .form-select { 
+    background-color: #ffffff; 
+    border: 1px solid #cbd5e1; 
     color: var(--dark) !important;
+}
+
+/* Perbaikan Tombol Simpan agar tidak mepet */
+.btn-save {
+    padding: 12px !important;
     font-weight: 700;
+    letter-spacing: 0.5px;
+    background-color: var(--primary);
+    border: none;
+    transition: 0.3s;
+}
+.btn-save:hover { background-color: var(--dark); transform: translateY(-2px); }
+
+/* TABEL & FIX WARNA TEKS (Solusi untuk Gambar Anda) */
+.table thead th {
+    background-color: var(--dark) !important;
+    color: white !important;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+#tabelNota td {
+    color: var(--dark) !important; /* Memastikan semua teks di baris tabel berwarna gelap */
+    font-weight: 500;
+}
+
+/* Badge Shift - Fix Teks Putih yang Hilang */
+.badge-pagi {
+    background-color: #fef3c7 !important; /* Kuning background */
+    color: #92400e !important;            /* Teks Coklat Tua (Kontras) */
+    border: 1px solid var(--warning) !important;
+    padding: 6px 12px;
+    border-radius: 8px;
 }
 
 .badge-malam {
-    background-color: var(--dark) !important;
-    color: white !important;
-    font-weight: 700;
+    background-color: #1e293b !important; /* Biru Tua background */
+    color: #ffffff !important;            /* Teks Putih murni */
+    padding: 6px 12px;
+    border-radius: 8px;
 }
 
-/* Tombol */
-.btn-primary { background-color: var(--primary); border: none; }
-.btn-primary:hover { background-color: var(--secondary); }
+/* Animasi Baris Baru */
+.new-row { animation: fadeIn 0.5s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Responsif Print */
-@media print {
-    .navbar, #adminPanel, .action-col, .btn-group, .input-group, footer {
-        display: none !important;
-    }
-}
+@media print { .navbar, #adminPanel, .action-col, .btn-group, footer { display: none !important; } }
