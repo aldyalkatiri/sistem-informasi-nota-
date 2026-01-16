@@ -1,85 +1,86 @@
-/* dashboard.css - Dashboard Admin Styles */
+/* dashboard.css - Sinkronisasi Warna Ali Akatiri */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
+:root {
+    --primary: #1e3a8a;    /* Biru Tua */
+    --secondary: #3b82f6;  /* Biru Terang */
+    --dark: #0f172a;       /* Hitam Slate */
+    --light: #f8fafc;      /* Abu Putih */
+    --warning: #f59e0b;    /* Oranye/Kuning */
+}
+
 body {
-    background-color: #f8fafc;
+    background-color: var(--light);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #1e293b;
+    color: var(--dark);
 }
 
-/* Navbar */
+/* Navbar Tetap Konsisten Biru Tua */
 .navbar {
-    background: #1e3a8a !important;
-    padding: 15px 0;
-    border-bottom: 4px solid #3b82f6;
+    background: var(--primary) !important;
+    border-bottom: 3px solid var(--secondary);
 }
 
-/* Header Panel */
+/* Kartu Statistik - Menghilangkan warna putih yang tidak sinkron */
+.stat-card-total { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+.stat-card-pagi { background: white; border: 1px solid #e2e8f0; color: var(--dark); }
+.stat-card-malam { background: var(--dark); color: white; }
+
+/* Panel Input */
 .header-panel {
-    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-    color: white;
-    padding: 25px;
-    border-radius: 20px 20px 0 0;
+    background: var(--primary) !important;
+    color: white !important;
 }
 
-/* Card Styling */
 .card {
     border: none;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Form Styling */
-.form-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: #64748b;
-}
-
-.form-select, .form-control {
-    border-radius: 10px;
-    background-color: #f1f5f9;
+/* Perbaikan Warna Input agar tidak "mati" */
+.form-control, .form-select {
     border: 1px solid #e2e8f0;
-    padding: 10px 15px;
+    background-color: white;
+    color: var(--dark);
 }
 
-.btn-primary {
-    background: #1e3a8a;
+.form-control:focus, .form-select:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Tabel Styling */
+.table-dark {
+    background-color: var(--dark) !important;
+}
+
+.table thead th {
     border: none;
-    font-weight: 700;
-    border-radius: 10px;
-    transition: 0.3s;
+    font-size: 12px;
+    letter-spacing: 0.5px;
 }
 
-/* Badge Shift */
+/* Badge Warna untuk Shift */
 .badge-pagi {
-    background-color: #fef3c7;
-    color: #92400e;
-    border: 1px solid #f59e0b;
+    background-color: var(--warning) !important;
+    color: var(--dark) !important;
+    font-weight: 700;
 }
 
 .badge-malam {
-    background-color: #1e293b;
-    color: white;
+    background-color: var(--dark) !important;
+    color: white !important;
+    font-weight: 700;
 }
 
-/* Table Animation */
-.new-row {
-    animation: fadeInRow 0.5s ease-out;
-}
+/* Tombol */
+.btn-primary { background-color: var(--primary); border: none; }
+.btn-primary:hover { background-color: var(--secondary); }
 
-@keyframes fadeInRow {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Print Configuration */
+/* Responsif Print */
 @media print {
-    .navbar, #adminPanel, .action-col, .btn-group, footer {
+    .navbar, #adminPanel, .action-col, .btn-group, .input-group, footer {
         display: none !important;
     }
-    body { background: white; }
-    .card { box-shadow: none !important; border: 1px solid #eee !important; }
 }
