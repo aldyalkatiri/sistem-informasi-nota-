@@ -1,146 +1,176 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Sistem Informasi Nota Ali Akatiri</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-<body>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-<nav class="navbar navbar-dark shadow-sm">
-    <div class="container d-flex justify-content-between align-items-center">
-        <span class="navbar-brand fw-bold">
-            <i class="fas fa-database me-2 text-info"></i> SISTEM INFORMASI NOTA
-        </span>
-        <button onclick="logout()" class="btn btn-danger btn-sm px-4 fw-bold rounded-pill">
-            <i class="fas fa-sign-out-alt me-1"></i> LOGOUT
-        </button>
-    </div>
-</nav>
+// --- 1. KONFIGURASI FIREBASE ---
+const firebaseConfig = {
+    apiKey: "AIzaSyCM3YRUd51lT2wFSOESJH-ZjvQQJeUJMUw",
+    authDomain: "sistem-nota.firebaseapp.com",
+    databaseURL: "https://sistem-nota-default-rtdb.firebaseio.com",
+    projectId: "sistem-nota",
+    storageBucket: "sistem-nota.firebasestorage.app",
+    messagingSenderId: "1043542152932",
+    appId: "1:1043542152932:web:21d4bc67f185fb4768fef1"
+};
 
-<div class="container my-5">
-    
-    <div class="row mb-4 text-center">
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card-total p-4 shadow-sm h-100">
-                <small>TOTAL NOTA</small>
-                <h2 id="statTotal">0</h2>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card-pagi p-4 shadow-sm h-100">
-                <small class="text-primary">SHIFT PAGI</small>
-                <h2 id="statPagi" class="text-primary">0</h2>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card-malam p-4 shadow-sm h-100">
-                <small>SHIFT MALAM</small>
-                <h2 id="statMalam">0</h2>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card-qty p-4 shadow-sm h-100">
-                <small>TOTAL SELURUH UNIT</small>
-                <h2 id="statTotalQty">0</h2>
-            </div>
-        </div>
-    </div>
+// --- 2. INISIALISASI ---
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const dbRef = ref(db, 'nota_data');
 
-    <div id="adminPanel" class="card mb-5 border-0 shadow">
-        <div class="header-panel text-center">
-            <h5 class="fw-bold mb-0"><i class="fas fa-edit me-2"></i>INPUT DATA NOTA BARU (CLOUD SYNC)</h5>
-        </div>
-        <div class="card-body p-4">
-            <form id="notaForm">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold small">TANGGAL NOTA</label>
-                        <input type="date" id="tanggalNota" class="form-control text-center" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold small">JENIS PERBAIKAN</label>
-                        <select id="kodeJenis" class="form-select text-center" required>
-                            <option value="" disabled selected>Pilih Jenis...</option>
-                            <option value="SL">SL (BAN)</option>
-                            <option value="SD">SD (LAS)</option>
-                            <option value="SI">SI (MEKANIK PERAWATAN)</option>
-                            <option value="SX">SX (MEKANIK)</option>
-                            <option value="SY">SY (GRASSES)</option>
-                            <option value="SG">SG (ELEKTRIK)</option>
-                            <option value="ST">ST (PERAWATAN ALAT BERAT)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold small">SHIFT KERJA</label>
-                        <select id="shift" class="form-select text-center" required>
-                            <option value="PAGI">PAGI</option>
-                            <option value="MALAM">MALAM</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold small">JUMLAH (QTY)</label>
-                        <input type="number" id="jumlah" class="form-control text-center" placeholder="0" required min="1">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 mt-4 text-white shadow-sm py-2 fw-bold">
-                    <i class="fas fa-save me-2"></i>SIMPAN DATA KE CLOUD
-                </button>
-            </form>
-        </div>
-    </div>
+// Map untuk mengubah kode menjadi deskripsi teks
+const deskripsiMap = {
+    "SL": "BAN",
+    "SD": "LAS",
+    "SI": "MEKANIK PERAWATAN",
+    "SX": "MEKANIK",
+    "SY": "GRASSES",
+    "SG": "ELEKTRIK",
+    "ST": "PERAWATAN ALAT BERAT"
+};
 
-    <div class="card border-0 shadow-lg">
-        <div class="card-body p-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-2">
-                <h5 class="fw-bold mb-0"><i class="fas fa-list me-2 text-primary"></i>Rincian Data Real-time (Publik)</h5>
-                <div class="d-flex gap-2">
-                    <input type="text" id="cariData" class="form-control form-control-sm" placeholder="Cari data..." style="max-width: 250px;">
-                    <button onclick="window.print()" class="btn btn-outline-dark btn-sm" title="Cetak Nota">
-                        <i class="fas fa-print"></i>
-                    </button>
-                    <button onclick="exportToExcel()" class="btn btn-success btn-sm" title="Download Excel">
-                        <i class="fas fa-file-excel"></i> Excel
-                    </button>
-                </div>
-            </div>
-            
-            <div class="table-responsive">
-                <table class="table table-hover align-middle text-center" id="tableToExport">
-                    <thead>
-                        <tr>
-                            <th width="50">No</th>
-                            <th>Tanggal</th>
-                            <th>Kode</th>
-                            <th class="text-start">Deskripsi Perbaikan</th>
-                            <th>Shift</th>
-                            <th>Qty</th>
-                            <th class="action-col">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelNota">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+// --- 3. FUNGSI SIMPAN DATA ---
+const notaForm = document.getElementById('notaForm');
+if (notaForm) {
+    notaForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-    <footer class="text-center mt-5 pb-4">
-        <p class="text-muted small">
-            Sistem Informasi Nota &copy; 2026 | Built with <i class="fas fa-heart text-danger"></i> by 
-            <span class="fw-bold text-dark text-uppercase">Ali Akatiri</span>
-        </p>
-    </footer>
-</div>
+        const kode = document.getElementById('kodeJenis').value;
+        const data = {
+            tanggal: document.getElementById('tanggalNota').value,
+            kode: kode,
+            deskripsi: deskripsiMap[kode] || "Perbaikan Umum",
+            shift: document.getElementById('shift').value,
+            qty: parseInt(document.getElementById('jumlah').value),
+            createdAt: new Date().getTime()
+        };
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        // Push data ke Firebase
+        const newNotaRef = push(dbRef);
+        set(newNotaRef, data)
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data nota tersimpan di Cloud',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                notaForm.reset();
+            })
+            .catch((error) => {
+                Swal.fire('Error!', error.message, 'error');
+            });
+    });
+}
 
-<script type="module" src="dashboard.js"></script>
+// --- 4. FUNGSI TAMPILKAN DATA (REAL-TIME) ---
+onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
+    const tbody = document.getElementById('tabelNota');
+    tbody.innerHTML = "";
 
-</body>
-</html>
+    // Variabel untuk statistik
+    let totalNota = 0;
+    let pagi = 0;
+    let malam = 0;
+    let totalQty = 0;
+
+    if (data) {
+        // Balik urutan agar data terbaru ada di paling atas
+        const keys = Object.keys(data).reverse();
+        
+        keys.forEach((key, index) => {
+            const item = data[key];
+
+            // Update hitungan statistik
+            totalNota++;
+            totalQty += item.qty;
+            if (item.shift === "PAGI") pagi++;
+            if (item.shift === "MALAM") malam++;
+
+            // Buat baris tabel
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.tanggal}</td>
+                    <td><span class="badge bg-secondary">${item.kode}</span></td>
+                    <td class="text-start">${item.deskripsi}</td>
+                    <td><span class="badge ${item.shift === 'PAGI' ? 'bg-info' : 'bg-dark'}">${item.shift}</span></td>
+                    <td class="fw-bold text-primary">${item.qty}</td>
+                    <td class="action-col">
+                        <button onclick="hapusNota('${key}')" class="btn btn-sm btn-outline-danger border-0">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    } else {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-muted p-4">Belum ada data nota tersimpan.</td></tr>`;
+    }
+
+    // Update Angka di Dashboard secara Real-time
+    document.getElementById('statTotal').innerText = totalNota;
+    document.getElementById('statPagi').innerText = pagi;
+    document.getElementById('statMalam').innerText = malam;
+    document.getElementById('statTotalQty').innerText = totalQty;
+});
+
+// --- 5. FUNGSI HAPUS DATA ---
+window.hapusNota = (key) => {
+    Swal.fire({
+        title: 'Apakah anda yakin?',
+        text: "Data akan dihapus permanen dari cloud!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const exactRef = ref(db, `nota_data/${key}`);
+            remove(exactRef).then(() => {
+                Swal.fire('Terhapus!', 'Data telah dihapus.', 'success');
+            });
+        }
+    });
+};
+
+// --- 6. FUNGSI PENCARIAN ---
+const inputCari = document.getElementById('cariData');
+if (inputCari) {
+    inputCari.addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#tabelNota tr');
+        
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+}
+
+// --- 7. FUNGSI EXPORT EXCEL ---
+window.exportToExcel = function() {
+    const table = document.getElementById("tableToExport");
+    // Hilangkan kolom aksi saat export agar excel rapi
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Data Nota" });
+    XLSX.writeFile(wb, `Nota_Ali_Akatiri_${new Date().toLocaleDateString()}.xlsx`);
+};
+
+// --- 8. FUNGSI LOGOUT ---
+window.logout = function() {
+    Swal.fire({
+        title: 'Logout?',
+        text: "Anda akan kembali ke halaman login",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Logout'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "index.html";
+        }
+    });
+};
