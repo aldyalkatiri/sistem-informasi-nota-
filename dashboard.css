@@ -1,14 +1,18 @@
-/* dashboard.css - FINAL VERSION (Ali Akatiri) */
+/* SISTEM INFORMASI NOTA - FINAL CSS (2026)
+   Optimized for: Contrast, Mobile-First, and Clean Aesthetics
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
-/* 1. Root Variables & Reset */
+/* --- 1. Dasar & Variabel Warna --- */
 :root {
-    --primary: #1e3a8a;    /* Biru Tua */
-    --secondary: #3b82f6;  /* Biru Terang */
-    --dark: #0f172a;       /* Hitam Slate */
-    --light: #f8fafc;      /* Abu Putih */
-    --warning: #f59e0b;    /* Oranye/Kuning */
-    --success: #10b981;    /* Hijau */
+    --primary: #1e3a8a;    /* Biru Profesional */
+    --secondary: #3b82f6;  /* Biru Aksen */
+    --dark: #0f172a;       /* Slate Gelap */
+    --light: #f8fafc;      /* Background Terang */
+    --warning: #f59e0b;    /* Kuning Peringatan */
+    --success: #10b981;    /* Hijau Statistik */
+    --danger: #ef4444;     /* Merah Hapus */
 }
 
 * {
@@ -24,30 +28,27 @@ body {
     line-height: 1.6;
 }
 
-/* 2. Navbar Styling */
+/* --- 2. Navigasi --- */
 .navbar {
     background: var(--primary) !important;
     border-bottom: 4px solid var(--secondary);
     padding: 1rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* 3. Card & Header Styling */
+.navbar-brand {
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+}
+
+/* --- 3. Kartu Statistik (Dashboard Utama) --- */
 .card {
     border: none;
-    border-radius: 15px;
+    border-radius: 16px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease;
 }
 
-.header-panel {
-    background: var(--primary) !important;
-    color: white !important;
-    padding: 1.25rem;
-    text-align: center;
-}
-
-/* 4. Statistik Cards (Top Row - 4 Kolom) */
 .stat-card-total { 
     background: linear-gradient(135deg, var(--primary), var(--secondary)); 
     color: white; 
@@ -69,99 +70,133 @@ body {
     color: white; 
 }
 
-.stat-card-total small, .stat-card-malam small, .stat-card-qty small {
-    opacity: 0.8;
-    font-weight: 600;
+.card h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
 }
 
-/* 5. Form Styling */
-.form-label {
-    font-size: 0.75rem;
+.card small {
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+/* --- 4. Panel Input (Admin) --- */
+.header-panel {
+    background: var(--primary);
+    color: white;
+    padding: 1rem;
+    border-radius: 16px 16px 0 0;
+    font-weight: 700;
+}
+
+.form-label {
+    font-size: 0.8rem;
     color: #64748b;
 }
 
 .form-control, .form-select {
-    border: 1px solid #cbd5e1;
     border-radius: 10px;
-    padding: 0.6rem 1rem;
-    color: var(--dark) !important; /* Memastikan teks input selalu gelap dan terbaca */
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    color: var(--dark) !important;
+    font-weight: 500;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     border-color: var(--secondary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .btn-save {
-    background: var(--primary);
+    background-color: var(--primary);
     border: none;
-    padding: 12px;
+    padding: 1rem;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 12px;
     transition: all 0.3s ease;
 }
 
 .btn-save:hover {
-    background: var(--dark);
+    background-color: var(--dark);
     transform: translateY(-2px);
 }
 
-/* 6. Table Styling (Fix Teks Hilang) */
+/* --- 5. Tabel Data (Fix Kontras Teks) --- */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
 .table thead th {
     background-color: var(--dark) !important;
     color: white !important;
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 1rem;
     border: none;
+    padding: 1rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+#tabelNota tr {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 #tabelNota td {
-    color: var(--dark) !important; /* Memastikan teks baris tabel selalu terlihat tajam */
-    padding: 1rem;
+    padding: 1.25rem 1rem;
+    color: var(--dark) !important; /* Teks baris tabel sangat tajam */
+    font-weight: 600;
     vertical-align: middle;
-    border-bottom: 1px solid #f1f5f9;
+    border-top: 1px solid #f1f5f9;
 }
 
-/* 7. Badge Shift (Kontras Tinggi) */
+/* --- 6. Badge Shift (Styling Berbeda) --- */
 .badge-pagi {
-    background-color: #fef3c7 !important; /* Kuning Lembut */
-    color: #92400e !important;            /* Cokelat Tua agar kontras dengan kuning */
+    background-color: #fef3c7 !important; /* Kuning Soft */
+    color: #92400e !important;            /* Cokelat Tua (Kontras Tinggi) */
     border: 1px solid var(--warning) !important;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 10px;
 }
 
 .badge-malam {
     background-color: #1e293b !important; /* Biru Gelap */
-    color: #ffffff !important;            /* Teks Putih Murni */
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 700;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 10px;
 }
 
-/* 8. Utility Classes */
-.bg-light.rounded-pill {
-    background-color: #f1f5f9 !important;
+/* --- 7. Utilitas --- */
+.btn-danger {
+    background-color: var(--danger);
+    border: none;
+    font-weight: 600;
 }
 
-.action-col button {
-    transition: color 0.2s;
+#cariData {
+    border-radius: 20px;
+    padding-left: 1.5rem;
+    border: 1px solid #e2e8f0;
 }
 
-.action-col button:hover {
-    color: #be123c !important; /* Merah saat hover tombol hapus */
-}
-
-/* 9. Optimasi Cetak */
+/* --- 8. Mode Cetak (Print) --- */
 @media print {
     .navbar, #adminPanel, .action-col, .btn-group, #cariData, footer {
         display: none !important;
     }
     body { background: white; }
     .card { box-shadow: none; border: 1px solid #eee; }
+    .stat-card-total, .stat-card-malam, .stat-card-qty {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #ccc;
+    }
+}
+
+/* --- 9. Responsivitas Mobile --- */
+@media (max-width: 768px) {
+    .card h2 { font-size: 1.8rem; }
+    .navbar-brand { font-size: 1rem; }
+    .table thead { display: none; } /* Sembunyikan header tabel di mobile jika perlu */
 }
