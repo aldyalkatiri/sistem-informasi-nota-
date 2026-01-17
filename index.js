@@ -1,176 +1,203 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+/**
+ * index.js - FINAL FULL VERSION (2026)
+ * Sistem Informasi Nota Ali Akatiri
+ * Fitur: Daily Auto-Reset, Penjumlahan Qty Akurat, Export Excel Rapi
+ */
 
-// --- 1. KONFIGURASI FIREBASE ---
-const firebaseConfig = {
-    apiKey: "AIzaSyCM3YRUd51lT2wFSOESJH-ZjvQQJeUJMUw",
-    authDomain: "sistem-nota.firebaseapp.com",
-    databaseURL: "https://sistem-nota-default-rtdb.firebaseio.com",
-    projectId: "sistem-nota",
-    storageBucket: "sistem-nota.firebasestorage.app",
-    messagingSenderId: "1043542152932",
-    appId: "1:1043542152932:web:21d4bc67f185fb4768fef1"
-};
+// --- 1. KEAMANAN & CEK SESI ---
+if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+    window.location.href = 'index.html';
+}
+const userRole = sessionStorage.getItem('role');
 
-// --- 2. INISIALISASI ---
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const dbRef = ref(db, 'nota_data');
+// --- 2. INITIAL LOADING (SAAT HALAMAN DIBUKA) ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Sembunyikan Panel Input jika user adalah 'user'
+    const adminPanel = document.getElementById('adminPanel');
+    if (userRole === 'user' && adminPanel) {
+        adminPanel.style.display = 'none';
+    }
 
-// Map untuk mengubah kode menjadi deskripsi teks
-const deskripsiMap = {
-    "SL": "BAN",
-    "SD": "LAS",
-    "SI": "MEKANIK PERAWATAN",
-    "SX": "MEKANIK",
-    "SY": "GRASSES",
-    "SG": "ELEKTRIK",
-    "ST": "PERAWATAN ALAT BERAT"
-};
+    // Set Tanggal Otomatis ke Hari Ini (Zona Waktu Lokal)
+    const tglInput = document.getElementById('tanggalNota');
+    if (tglInput) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        tglInput.value = `${year}-${month}-${day}`;
+    }
 
-// --- 3. FUNGSI SIMPAN DATA ---
+    // Muat Data
+    loadData();
+
+    // Fitur Pencarian Real-time
+    const searchInput = document.getElementById('cariData');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            loadData(e.target.value.toLowerCase());
+        });
+    }
+});
+
+// --- 3. FUNGSI LOGOUT ---
+function logout() {
+    sessionStorage.clear();
+    window.location.href = 'index.html';
+}
+
+// --- 4. LOGIKA SIMPAN DATA ---
 const notaForm = document.getElementById('notaForm');
 if (notaForm) {
-    notaForm.addEventListener('submit', (e) => {
+    notaForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const kode = document.getElementById('kodeJenis').value;
-        const data = {
-            tanggal: document.getElementById('tanggalNota').value,
-            kode: kode,
-            deskripsi: deskripsiMap[kode] || "Perbaikan Umum",
-            shift: document.getElementById('shift').value,
-            qty: parseInt(document.getElementById('jumlah').value),
-            createdAt: new Date().getTime()
+        const select = document.getElementById('kodeJenis');
+        const qtyInput = document.getElementById('jumlah');
+        const shiftInput = document.getElementById('shift');
+        const tglInput = document.getElementById('tanggalNota');
+
+        // Validasi Dasar
+        if (!select.value || !qtyInput.value || qtyInput.value <= 0) {
+            Swal.fire('Input Salah', 'Pilih jenis perbaikan dan isi jumlah unit dengan benar!', 'error');
+            return;
+        }
+
+        const dataBaru = {
+            id: Date.now(), // ID Unik untuk keperluan hapus
+            tglNota: tglInput.value,
+            kode: select.value,
+            deskripsi: select.options[select.selectedIndex].text,
+            shift: shiftInput.value,
+            jumlah: parseInt(qtyInput.value) || 0
         };
 
-        // Push data ke Firebase
-        const newNotaRef = push(dbRef);
-        set(newNotaRef, data)
-            .then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Data nota tersimpan di Cloud',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                notaForm.reset();
-            })
-            .catch((error) => {
-                Swal.fire('Error!', error.message, 'error');
-            });
+        // Ambil DB lama, tambahkan data baru, simpan kembali
+        let db = JSON.parse(localStorage.getItem('db_ali_akatiri')) || [];
+        db.push(dataBaru);
+        localStorage.setItem('db_ali_akatiri', JSON.stringify(db));
+
+        // Notifikasi Berhasil
+        Swal.fire({
+            icon: 'success',
+            title: 'Data Berhasil Disimpan',
+            showConfirmButton: false,
+            timer: 800
+        });
+
+        // Reset Form & Refresh Tampilan
+        this.reset();
+        tglInput.value = new Date().toISOString().split('T')[0];
+        loadData();
     });
 }
 
-// --- 4. FUNGSI TAMPILKAN DATA (REAL-TIME) ---
-onValue(dbRef, (snapshot) => {
-    const data = snapshot.val();
-    const tbody = document.getElementById('tabelNota');
-    tbody.innerHTML = "";
+// --- 5. FUNGSI LOAD DATA (LOGIKA AUTO-RESET PER HARI) ---
+function loadData(keyword = "") {
+    const tabel = document.getElementById('tabelNota');
+    if (!tabel) return;
 
-    // Variabel untuk statistik
-    let totalNota = 0;
-    let pagi = 0;
-    let malam = 0;
-    let totalQty = 0;
+    let list = JSON.parse(localStorage.getItem('db_ali_akatiri')) || [];
+    
+    // Penentuan Tanggal Hari Ini (Format YYYY-MM-DD)
+    const now = new Date();
+    const hariIni = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
-    if (data) {
-        // Balik urutan agar data terbaru ada di paling atas
-        const keys = Object.keys(data).reverse();
-        
-        keys.forEach((key, index) => {
-            const item = data[key];
+    // FILTER: Hanya tampilkan data yang tanggalnya = hari ini
+    let dataHariIni = list.filter(item => item.tglNota === hariIni);
 
-            // Update hitungan statistik
-            totalNota++;
-            totalQty += item.qty;
-            if (item.shift === "PAGI") pagi++;
-            if (item.shift === "MALAM") malam++;
+    // HITUNG STATISTIK (Berdasarkan Data Hari Ini)
+    const totalNota = dataHariIni.length;
+    const totalPagi = dataHariIni.filter(i => i.shift === 'PAGI').length;
+    const totalMalam = dataHariIni.filter(i => i.shift === 'MALAM').length;
+    const totalQty = dataHariIni.reduce((acc, curr) => acc + (curr.jumlah || 0), 0);
 
-            // Buat baris tabel
-            const row = `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${item.tanggal}</td>
-                    <td><span class="badge bg-secondary">${item.kode}</span></td>
-                    <td class="text-start">${item.deskripsi}</td>
-                    <td><span class="badge ${item.shift === 'PAGI' ? 'bg-info' : 'bg-dark'}">${item.shift}</span></td>
-                    <td class="fw-bold text-primary">${item.qty}</td>
-                    <td class="action-col">
-                        <button onclick="hapusNota('${key}')" class="btn btn-sm btn-outline-danger border-0">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
-        });
-    } else {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-muted p-4">Belum ada data nota tersimpan.</td></tr>`;
-    }
+    // Update Elemen Statistik ke Dashboard
+    if(document.getElementById('statTotal')) document.getElementById('statTotal').innerText = totalNota;
+    if(document.getElementById('statPagi')) document.getElementById('statPagi').innerText = totalPagi;
+    if(document.getElementById('statMalam')) document.getElementById('statMalam').innerText = totalMalam;
+    if(document.getElementById('statTotalQty')) document.getElementById('statTotalQty').innerText = totalQty;
 
-    // Update Angka di Dashboard secara Real-time
-    document.getElementById('statTotal').innerText = totalNota;
-    document.getElementById('statPagi').innerText = pagi;
-    document.getElementById('statMalam').innerText = malam;
-    document.getElementById('statTotalQty').innerText = totalQty;
-});
+    // Bersihkan Tabel Sebelum Render
+    tabel.innerHTML = '';
 
-// --- 5. FUNGSI HAPUS DATA ---
-window.hapusNota = (key) => {
+    // Filter Pencarian jika ada keyword
+    let filtered = dataHariIni.filter(item => 
+        item.kode.toLowerCase().includes(keyword) || 
+        item.deskripsi.toLowerCase().includes(keyword)
+    );
+
+    // Render Data ke Baris Tabel (Data terbaru di atas)
+    filtered.reverse().forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="text-muted small">${filtered.length - index}</td>
+            <td class="fw-bold">${item.tglNota}</td>
+            <td><span class="badge bg-primary px-3">${item.kode}</span></td>
+            <td class="text-start">${item.deskripsi}</td>
+            <td>
+                <span class="badge ${item.shift === 'PAGI' ? 'badge-pagi' : 'badge-malam'}">
+                    ${item.shift}
+                </span>
+            </td>
+            <td class="fw-bold text-dark">${item.jumlah}</td>
+            <td class="action-col">
+                ${userRole === 'admin' ? 
+                `<button onclick="deleteData(${item.id})" class="btn btn-link text-danger p-0 border-0 shadow-none">
+                    <i class="fas fa-trash-alt"></i>
+                </button>` : '-'}
+            </td>
+        `;
+        tabel.appendChild(row);
+    });
+}
+
+// --- 6. FUNGSI HAPUS DATA ---
+function deleteData(id) {
     Swal.fire({
-        title: 'Apakah anda yakin?',
-        text: "Data akan dihapus permanen dari cloud!",
+        title: 'Hapus data ini?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
         confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            const exactRef = ref(db, `nota_data/${key}`);
-            remove(exactRef).then(() => {
-                Swal.fire('Terhapus!', 'Data telah dihapus.', 'success');
-            });
+            let db = JSON.parse(localStorage.getItem('db_ali_akatiri')) || [];
+            db = db.filter(item => item.id !== id);
+            localStorage.setItem('db_ali_akatiri', JSON.stringify(db));
+            loadData();
+            Swal.fire('Terhapus!', 'Data telah dihapus.', 'success');
         }
-    });
-};
-
-// --- 6. FUNGSI PENCARIAN ---
-const inputCari = document.getElementById('cariData');
-if (inputCari) {
-    inputCari.addEventListener('keyup', function() {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#tabelNota tr');
-        
-        rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
-            row.style.display = text.includes(filter) ? '' : 'none';
-        });
     });
 }
 
-// --- 7. FUNGSI EXPORT EXCEL ---
-window.exportToExcel = function() {
-    const table = document.getElementById("tableToExport");
-    // Hilangkan kolom aksi saat export agar excel rapi
-    const wb = XLSX.utils.table_to_book(table, { sheet: "Data Nota" });
-    XLSX.writeFile(wb, `Nota_Ali_Akatiri_${new Date().toLocaleDateString()}.xlsx`);
-};
+// --- 7. EXPORT KE EXCEL (RAPID & BERSIH) ---
+function exportToExcel() {
+    let list = JSON.parse(localStorage.getItem('db_ali_akatiri')) || [];
+    
+    if (list.length === 0) {
+        Swal.fire('Data Kosong', 'Tidak ada data untuk di-export.', 'info');
+        return;
+    }
 
-// --- 8. FUNGSI LOGOUT ---
-window.logout = function() {
-    Swal.fire({
-        title: 'Logout?',
-        text: "Anda akan kembali ke halaman login",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Logout'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = "index.html";
-        }
-    });
-};
+    // Mapping Data agar rapi di Excel (Ganti ID dengan Nomor Urut)
+    const dataExcel = list.map((item, index) => ({
+        "No": index + 1,
+        "Tanggal": item.tglNota,
+        "Kode": item.kode,
+        "Deskripsi": item.deskripsi,
+        "Shift": item.shift,
+        "Qty (Unit)": item.jumlah
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataExcel);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Rekapan_Nota");
+    
+    // Nama file dinamis
+    const fileName = `Laporan_Nota_Ali_Akatiri_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+}
