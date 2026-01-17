@@ -3,72 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Nota | Ali Akatiri v2026</title>
+    <title>Dashboard | Sistem Nota Ali Akatiri v2026</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link rel="stylesheet" href="dashboard.css">
 </head>
-<body>
+<body class="dashboard-body">
 
-    <nav class="navbar navbar-dark shadow-sm">
+    <nav class="navbar navbar-dark shadow-sm glass-nav mb-4">
         <div class="container d-flex justify-content-between align-items-center">
             <span class="navbar-brand fw-bold">
-                <i class="fas fa-file-invoice-dollar me-2"></i> Sistem informasi Penginputan Nota
+                <i class="fas fa-file-invoice-dollar me-2 text-info"></i> DATA NOTA ALY AKATIRI
             </span>
-            <button onclick="logout()" class="btn btn-danger btn-sm px-4 fw-bold rounded-pill">
-                <i class="fas fa-sign-out-alt me-1"></i> LOGOUT
-            </button>
+            <div class="d-flex align-items-center gap-3">
+                <span id="displayUser" class="text-white-50 small d-none d-md-block"></span>
+                <button onclick="logout()" class="btn btn-outline-danger btn-sm px-4 fw-bold rounded-pill">
+                    <i class="fas fa-sign-out-alt me-1"></i> LOGOUT
+                </button>
+            </div>
         </div>
     </nav>
 
-    <div class="container my-5">
+    <div class="container pb-5">
         
         <div class="row mb-4 text-center">
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-total p-4 shadow-sm border-0">
-                    <small>TOTAL NOTA</small>
-                    <h2 id="statTotal">0</h2>
+                <div class="card glass-card p-4 shadow-sm border-0">
+                    <small class="text-white-50 fw-bold">TOTAL NOTA</small>
+                    <h2 id="statTotal" class="fw-800 text-white">0</h2>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-pagi p-4 shadow-sm border-0">
-                    <small>SHIFT PAGI</small>
-                    <h2 id="statPagi">0</h2>
+                <div class="card glass-card p-4 shadow-sm border-0">
+                    <small class="text-warning fw-bold">SHIFT PAGI</small>
+                    <h2 id="statPagi" class="fw-800 text-white">0</h2>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-malam p-4 shadow-sm border-0">
-                    <small>SHIFT MALAM</small>
-                    <h2 id="statMalam">0</h2>
+                <div class="card glass-card p-4 shadow-sm border-0">
+                    <small class="text-info fw-bold">SHIFT MALAM</small>
+                    <h2 id="statMalam" class="fw-800 text-white">0</h2>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-qty p-4 shadow-sm border-0">
-                    <small>TOTAL UNIT</small>
-                    <h2 id="statTotalQty">0</h2>
+                <div class="card glass-card p-4 shadow-sm border-0">
+                    <small class="text-success fw-bold">TOTAL UNIT</small>
+                    <h2 id="statTotalQty" class="fw-800 text-white">0</h2>
                 </div>
             </div>
         </div>
 
-        <div id="adminPanel" class="card mb-5 shadow-sm border-0 overflow-hidden">
-            <div class="header-panel text-white p-3 text-center" style="background:#1e3a8a;">
-                <h6 class="fw-bold mb-0">TAMBAH DATA NOTA BARU</h6>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card glass-card p-4 border-0 shadow-lg">
+                    <h6 class="text-white fw-bold mb-3"><i class="fas fa-chart-bar me-2 text-info"></i>STATISTIK PERBAIKAN UNIT</h6>
+                    <div style="height: 250px;">
+                        <canvas id="chartPerbaikan"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminPanel" class="card glass-card mb-5 shadow-lg border-0">
+            <div class="card-header bg-white bg-opacity-10 text-center py-3">
+                <h6 class="fw-bold mb-0 text-white text-uppercase letter-spacing-1">Tambah Data Nota Baru</h6>
             </div>
             <div class="card-body p-4">
                 <form id="notaForm">
                     <div class="row g-3">
                         <div class="col-md-2">
-                            <label class="form-label fw-bold small text-muted">TANGGAL</label>
-                            <input type="date" id="tanggalNota" class="form-control" required>
+                            <label class="form-label text-white-50 small fw-bold">TANGGAL</label>
+                            <input type="date" id="tanggalNota" class="form-control glass-input" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold small text-muted">JENIS PERBAIKAN</label>
-                            <select id="kodeJenis" class="form-select" required>
+                            <label class="form-label text-white-50 small fw-bold">JENIS PERBAIKAN</label>
+                            <select id="kodeJenis" class="form-select glass-input" required>
                                 <option value="" disabled selected>Pilih Jenis...</option>
                                 <option value="SL">SL (BAN)</option>
                                 <option value="SD">SD (LAS)</option>
@@ -80,85 +95,72 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label fw-bold small text-muted">SHIFT</label>
-                            <select id="shift" class="form-select">
+                            <label class="form-label text-white-50 small fw-bold">SHIFT</label>
+                            <select id="shift" class="form-select glass-input">
                                 <option value="PAGI">PAGI</option>
                                 <option value="MALAM">MALAM</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label fw-bold small text-muted">QTY (UNIT)</label>
-                            <input type="number" id="jumlah" class="form-control" min="1" value="1" required>
+                            <label class="form-label text-white-50 small fw-bold">QTY (UNIT)</label>
+                            <input type="number" id="jumlah" class="form-control glass-input" min="1" value="1" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold small text-muted">FOTO BUKTI (OPSIONAL)</label>
-                            <input type="file" id="fotoNota" class="form-control" accept="image/*">
+                            <label class="form-label text-white-50 small fw-bold">FOTO BUKTI</label>
+                            <input type="file" id="fotoNota" class="form-control glass-input" accept="image/*">
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-4 fw-bold shadow">
+                    <button type="submit" class="btn btn-info w-100 mt-4 fw-bold text-dark shadow-glow">
                         <i class="fas fa-save me-2"></i> SIMPAN DATA KE SISTEM
                     </button>
                 </form>
             </div>
         </div>
 
-        <div class="card shadow-lg border-0">
-            <div class="card-body p-4">
-                
-                <div class="row g-2 mb-4 align-items-end">
-                    <div class="col-md-3">
-                        <label class="small fw-bold text-muted">DARI TANGGAL</label>
-                        <input type="date" id="filterTglMulai" class="form-control form-control-sm">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="small fw-bold text-muted">SAMPAI TANGGAL</label>
-                        <input type="date" id="filterTglSelesai" class="form-control form-control-sm">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="small fw-bold text-muted">CARI KATA KUNCI</label>
-                        <input type="text" id="cariData" class="form-control form-control-sm" placeholder="Kode atau Deskripsi...">
-                    </div>
-                    <div class="col-md-3 d-flex gap-1">
-                        <button onclick="loadData()" class="btn btn-primary btn-sm w-100" title="Terapkan Filter">
-                            <i class="fas fa-filter me-1"></i> Filter
-                        </button>
-                        <button onclick="resetFilter()" class="btn btn-outline-secondary btn-sm w-100" title="Reset/Hari Ini">
-                            <i class="fas fa-undo me-1"></i> Reset
-                        </button>
-                        <button onclick="exportToExcel()" class="btn btn-success btn-sm w-100" title="Download Excel">
-                            <i class="fas fa-file-excel me-1"></i> Excel
-                        </button>
-                    </div>
+        <div class="card glass-card shadow-lg border-0 p-4">
+            <div class="row g-2 mb-4 align-items-end">
+                <div class="col-md-3">
+                    <label class="small fw-bold text-white-50">DARI TANGGAL</label>
+                    <input type="date" id="filterTglMulai" class="form-control form-control-sm glass-input">
                 </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold text-white-50">SAMPAI TANGGAL</label>
+                    <input type="date" id="filterTglSelesai" class="form-control form-control-sm glass-input">
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold text-white-50">CARI DATA</label>
+                    <input type="text" id="cariData" class="form-control form-control-sm glass-input" placeholder="Kode/Deskripsi...">
+                </div>
+                <div class="col-md-3 d-flex gap-1">
+                    <button onclick="loadData()" class="btn btn-info btn-sm w-100 fw-bold"><i class="fas fa-filter"></i></button>
+                    <button onclick="resetFilter()" class="btn btn-outline-light btn-sm w-100 fw-bold"><i class="fas fa-undo"></i></button>
+                    <button onclick="exportToExcel()" class="btn btn-success btn-sm w-100 fw-bold"><i class="fas fa-file-excel"></i></button>
+                </div>
+            </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th width="50">No</th>
-                                <th>Tanggal</th>
-                                <th>Kode</th>
-                                <th class="text-start">Deskripsi</th>
-                                <th>Shift</th>
-                                <th>Qty</th>
-                                <th>Foto</th>
-                                <th class="action-col">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelNota">
-                            </tbody>
-                    </table>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center text-white">
+                    <thead class="glass-thead">
+                        <tr>
+                            <th width="50">No</th>
+                            <th>Tanggal</th>
+                            <th>Kode</th>
+                            <th class="text-start">Deskripsi</th>
+                            <th>Shift</th>
+                            <th>Qty</th>
+                            <th>Foto</th>
+                            <th class="action-col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelNota">
+                        </tbody>
+                </table>
             </div>
         </div>
 
-        <footer class="text-center mt-5 mb-4">
-            <p class="text-muted small">
-                © 2026 Powered by <span class="fw-bold text-dark">Ali Akatiri</span> 
-                <br>
-                <span class="badge bg-white text-muted shadow-sm mt-2 px-3 py-2 border">
-                    <i class="fas fa-check-circle text-success me-1"></i> Fitur Riwayat & Foto Aktif
-                </span>
+        <footer class="text-center mt-5">
+            <p class="text-white-50 small">
+                © 2026 Ali Akatiri System | <span class="text-info fw-bold">Professional Management</span>
             </p>
         </footer>
     </div>
@@ -166,4 +168,3 @@
     <script src="index.js"></script>
 </body>
 </html>
-
