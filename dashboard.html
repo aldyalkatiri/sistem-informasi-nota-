@@ -18,7 +18,7 @@
     <nav class="navbar navbar-dark shadow-sm">
         <div class="container d-flex justify-content-between align-items-center">
             <span class="navbar-brand fw-bold">
-                <i class="fas fa-file-invoice-dollar me-2"></i> SISTEM INPUT NOTA HARIAN
+                <i class="fas fa-file-invoice-dollar me-2"></i> DATA NOTA ALY AKATIRI
             </span>
             <button onclick="logout()" class="btn btn-danger btn-sm px-4 fw-bold rounded-pill">
                 <i class="fas fa-sign-out-alt me-1"></i> LOGOUT
@@ -30,25 +30,25 @@
         
         <div class="row mb-4 text-center">
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-total p-4">
-                    <small>TOTAL NOTA HARI INI</small>
+                <div class="card stat-card-total p-4 shadow-sm border-0">
+                    <small>TOTAL NOTA</small>
                     <h2 id="statTotal">0</h2>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-pagi p-4">
+                <div class="card stat-card-pagi p-4 shadow-sm border-0">
                     <small>SHIFT PAGI</small>
                     <h2 id="statPagi">0</h2>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-malam p-4">
+                <div class="card stat-card-malam p-4 shadow-sm border-0">
                     <small>SHIFT MALAM</small>
                     <h2 id="statMalam">0</h2>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card stat-card-qty p-4">
+                <div class="card stat-card-qty p-4 shadow-sm border-0">
                     <small>TOTAL SELURUH UNIT</small>
                     <h2 id="statTotalQty">0</h2>
                 </div>
@@ -57,7 +57,7 @@
 
         <div id="adminPanel" class="card mb-5 shadow-sm border-0">
             <div class="header-panel">
-                <h6 class="fw-bold mb-0 text-uppercase">Tambah Data Nota Baru</h6>
+                <h6 class="fw-bold mb-0 text-uppercase">TAMBAH DATA NOTA BARU</h6>
             </div>
             <div class="card-body p-4">
                 <form id="notaForm">
@@ -100,24 +100,48 @@
 
         <div class="card shadow-lg border-0">
             <div class="card-body p-4">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-list me-2 text-primary"></i> Rincian Data Hari Ini
-                    </h5>
-                    <div class="d-flex gap-2 w-100 w-md-auto">
-                        <div class="input-group">
+                
+                <div class="row g-2 mb-4 align-items-end">
+                    <div class="col-md-3">
+                        <label class="small fw-bold text-muted">DARI TANGGAL</label>
+                        <input type="date" id="filterTglMulai" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="small fw-bold text-muted">SAMPAI TANGGAL</label>
+                        <input type="date" id="filterTglSelesai" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="small fw-bold text-muted">CARI DATA</label>
+                        <div class="input-group input-group-sm">
                             <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" id="cariData" class="form-control border-start-0 ps-0" placeholder="Cari data...">
+                            <input type="text" id="cariData" class="form-control border-start-0 ps-0" placeholder="Kode atau deskripsi...">
                         </div>
-                        <button onclick="exportToExcel()" class="btn btn-success fw-bold px-3">
-                            <i class="fas fa-file-excel me-1"></i> EXCEL
+                    </div>
+                    <div class="col-md-2 d-flex gap-1">
+                        <button onclick="loadData()" class="btn btn-primary btn-sm w-100" title="Terapkan Filter">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <button onclick="resetFilter()" class="btn btn-outline-secondary btn-sm w-100" title="Reset/Hari Ini">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button onclick="exportToExcel()" class="btn btn-success btn-sm w-100" title="Download Excel">
+                            <i class="fas fa-file-excel"></i>
                         </button>
                     </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="fas fa-clipboard-list me-2 text-primary"></i> Rincian Data Nota
+                    </h5>
+                    <button onclick="window.print()" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                        <i class="fas fa-print me-1"></i> Cetak Laporan
+                    </button>
                 </div>
                 
                 <div class="table-responsive">
                     <table class="table table-hover align-middle text-center">
-                        <thead>
+                        <thead class="table-dark">
                             <tr>
                                 <th width="50">No</th>
                                 <th>Tanggal</th>
@@ -139,7 +163,9 @@
             <p class="text-muted small">
                 © 2026 Powered by <span class="fw-bold text-dark">Ali Akatiri</span> 
                 <br>
-                <span class="badge bg-light text-muted mt-2">Daily Auto-Reset Active</span>
+                <span class="badge bg-white text-muted shadow-sm mt-2 px-3 py-2 border">
+                    <i class="fas fa-check-circle text-success me-1"></i> Sistem Sinkron & Riwayat Aktif
+                </span>
             </p>
         </footer>
     </div>
@@ -147,4 +173,3 @@
     <script src="index.js"></script>
 </body>
 </html>
-
