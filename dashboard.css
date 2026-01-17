@@ -1,4 +1,21 @@
-/* --- RESET & BASE STYLES --- */
+/* dashboard.css - FINAL FULL VERSION (2026)
+   Sistem Informasi Nota Ali Akatiri 
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+/* 1. Root Variables */
+:root {
+    --primary: #1e3a8a;    /* Biru Navy */
+    --secondary: #3b82f6;  /* Biru Terang */
+    --dark: #0f172a;       /* Slate Dark */
+    --light: #f8fafc;      /* Background Light */
+    --warning: #f59e0b;    /* Orange/Amber */
+    --success: #10b981;    /* Emerald Green */
+    --danger: #ef4444;     /* Red */
+}
+
+/* 2. Global Reset */
 * {
     margin: 0;
     padding: 0;
@@ -6,186 +23,168 @@
 }
 
 body {
-    background-color: #f1f5f9;
-    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
-    color: #1e293b;
+    background-color: var(--light);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--dark);
     line-height: 1.6;
 }
 
-/* --- NAVBAR --- */
+/* 3. Navbar Styling */
 .navbar {
-    background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%) !important;
-    padding: 1.2rem 0;
-    border-bottom: 3px solid #3b82f6;
+    background: var(--primary) !important;
+    border-bottom: 4px solid var(--secondary);
+    padding: 1rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
-    font-size: 1.4rem;
-    letter-spacing: 1px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
-/* --- STATISTIC CARDS --- */
-.card {
-    border-radius: 15px;
-    border: none;
-    transition: all 0.3s ease;
+/* 4. Statistik Cards (4 Kolom) */
+.stat-card-total { 
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+    color: white; 
 }
 
-.card:hover {
-    transform: translateY(-8px);
+.stat-card-pagi { 
+    background: white; 
+    border: 1px solid #e2e8f0; 
+    color: var(--primary); 
 }
 
-.stat-card-total {
-    background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
-    color: white;
+.stat-card-malam { 
+    background: var(--dark); 
+    color: white; 
 }
 
-.stat-card-pagi {
-    background: white;
-    border-bottom: 5px solid #0ea5e9;
-}
-
-.stat-card-malam {
-    background: #1e293b;
-    color: white;
-}
-
-.stat-card-qty {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
+.stat-card-qty { 
+    background: var(--success); 
+    color: white; 
 }
 
 .card h2 {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    margin-top: 10px;
+    margin-top: 0.5rem;
 }
 
 .card small {
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    opacity: 0.9;
+    opacity: 0.8;
+    font-size: 0.7rem;
 }
 
-/* --- INPUT PANEL --- */
-.header-panel {
-    background-color: #f8fafc;
-    border-bottom: 2px solid #e2e8f0;
-    padding: 20px;
-    border-radius: 15px 15px 0 0;
-    color: #334155;
-}
-
-#adminPanel {
-    border-radius: 15px;
-}
-
-.form-label {
-    color: #475569;
-    margin-bottom: 8px;
-}
-
-.form-control, .form-select {
-    border-radius: 8px;
-    padding: 10px;
-    border: 1px solid #cbd5e1;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
-/* --- TABLE STYLES --- */
-.table {
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.table thead th {
-    background-color: #f8fafc;
-    color: #64748b;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    padding: 15px;
-    border-bottom: 2px solid #e2e8f0;
-}
-
-.table tbody td {
-    padding: 15px;
-    vertical-align: middle;
-}
-
-.badge {
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-weight: 600;
-}
-
-/* --- BUTTONS --- */
-.btn-primary {
-    background-color: #6366f1;
+/* 5. Card & Panel Styling */
+.card {
+    border-radius: 20px;
     border: none;
-    padding: 12px;
     transition: all 0.3s ease;
 }
 
-.btn-primary:hover {
-    background-color: #4f46e5;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+.header-panel {
+    background: var(--primary) !important;
+    color: white !important;
+    padding: 1.25rem;
+    border-radius: 20px 20px 0 0;
+    text-align: center;
 }
 
-.rounded-pill {
-    font-size: 0.85rem;
+/* 6. Form & Input Styling */
+.form-label {
+    font-weight: 700;
+    color: #475569;
 }
 
-/* --- RESPONSIVE ADJUSTMENTS --- */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-    
-    .card h2 {
-        font-size: 1.8rem;
-    }
-
-    #cariData {
-        width: 100% !important;
-        max-width: none !important;
-    }
+.form-control, .form-select {
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    color: var(--dark) !important;
+    font-weight: 600;
+    transition: 0.2s;
 }
 
-/* --- PRINT OPTIMIZATION --- */
+.form-control:focus, .form-select:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.btn-save {
+    background: var(--primary);
+    border: none;
+    padding: 1rem;
+    font-weight: 800;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.btn-save:hover {
+    background: var(--dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 7. Table Styling (Kontras Tinggi) */
+.table thead th {
+    background-color: var(--dark) !important;
+    color: white !important;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 1.2rem;
+    border: none;
+}
+
+#tabelNota td {
+    color: var(--dark) !important;
+    padding: 1.2rem;
+    font-weight: 600;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* 8. Badge Shift (Sangat Tajam) */
+.badge-pagi {
+    background-color: #fef3c7 !important; /* Kuning Terang */
+    color: #92400e !important;            /* Cokelat Tua */
+    border: 1px solid var(--warning) !important;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 800;
+}
+
+.badge-malam {
+    background-color: #1e293b !important; /* Slate Gelap */
+    color: #ffffff !important;            /* Putih */
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 800;
+}
+
+/* 9. Utility & Print */
+.action-col button {
+    font-size: 1.2rem;
+    transition: 0.2s;
+}
+
+.action-col button:hover {
+    color: var(--danger) !important;
+    transform: scale(1.1);
+}
+
 @media print {
-    .navbar, 
-    #adminPanel, 
-    .action-col, 
-    #cariData, 
-    .btn-success, 
-    .btn-outline-dark,
-    footer,
-    .btn-danger {
+    .navbar, #adminPanel, .action-col, #cariData, .btn-success, footer {
         display: none !important;
     }
+    body { background: white; }
+    .card { box-shadow: none; border: 1px solid #ddd; }
+}
 
-    body {
-        background-color: white;
-    }
-
-    .container {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    .card {
-        box-shadow: none !important;
-        border: 1px solid #eee !important;
-    }
-
-    .table {
-        font-size: 12px;
-    }
+/* 10. Responsive Adjustment */
+@media (max-width: 768px) {
+    .card h2 { font-size: 1.8rem; }
+    .header-panel h5 { font-size: 1rem; }
 }
