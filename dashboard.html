@@ -18,7 +18,7 @@
     <nav class="navbar navbar-dark shadow-sm">
         <div class="container d-flex justify-content-between align-items-center">
             <span class="navbar-brand fw-bold">
-                <i class="fas fa-file-invoice-dollar me-2"></i> SISTEM INFORMASI NOTA
+                <i class="fas fa-file-invoice-dollar me-2"></i> DATA NOTA ALY AKATIRI
             </span>
             <button onclick="logout()" class="btn btn-danger btn-sm px-4 fw-bold rounded-pill">
                 <i class="fas fa-sign-out-alt me-1"></i> LOGOUT
@@ -49,21 +49,21 @@
             </div>
             <div class="col-md-3 mb-3">
                 <div class="card stat-card-qty p-4 shadow-sm border-0">
-                    <small>TOTAL SELURUH UNIT</small>
+                    <small>TOTAL UNIT</small>
                     <h2 id="statTotalQty">0</h2>
                 </div>
             </div>
         </div>
 
-        <div id="adminPanel" class="card mb-5 shadow-sm border-0">
-            <div class="header-panel">
-                <h6 class="fw-bold mb-0 text-uppercase">TAMBAH DATA NOTA BARU</h6>
+        <div id="adminPanel" class="card mb-5 shadow-sm border-0 overflow-hidden">
+            <div class="header-panel text-white p-3 text-center" style="background:#1e3a8a;">
+                <h6 class="fw-bold mb-0">TAMBAH DATA NOTA BARU</h6>
             </div>
             <div class="card-body p-4">
                 <form id="notaForm">
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small text-muted">TANGGAL NOTA</label>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold small text-muted">TANGGAL</label>
                             <input type="date" id="tanggalNota" class="form-control" required>
                         </div>
                         <div class="col-md-3">
@@ -79,19 +79,23 @@
                                 <option value="ST">ST (PERAWATAN ALAT BERAT)</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small text-muted">SHIFT KERJA</label>
-                            <select id="shift" class="form-select" required>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold small text-muted">SHIFT</label>
+                            <select id="shift" class="form-select">
                                 <option value="PAGI">PAGI</option>
                                 <option value="MALAM">MALAM</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label fw-bold small text-muted">QTY (UNIT)</label>
-                            <input type="number" id="jumlah" class="form-control" placeholder="0" required min="1">
+                            <input type="number" id="jumlah" class="form-control" min="1" value="1" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small text-muted">FOTO BUKTI (OPSIONAL)</label>
+                            <input type="file" id="fotoNota" class="form-control" accept="image/*">
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-save w-100 mt-4 text-white shadow">
+                    <button type="submit" class="btn btn-primary w-100 mt-4 fw-bold shadow">
                         <i class="fas fa-save me-2"></i> SIMPAN DATA KE SISTEM
                     </button>
                 </form>
@@ -110,35 +114,23 @@
                         <label class="small fw-bold text-muted">SAMPAI TANGGAL</label>
                         <input type="date" id="filterTglSelesai" class="form-control form-control-sm">
                     </div>
-                    <div class="col-md-4">
-                        <label class="small fw-bold text-muted">CARI DATA</label>
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" id="cariData" class="form-control border-start-0 ps-0" placeholder="Kode atau deskripsi...">
-                        </div>
+                    <div class="col-md-3">
+                        <label class="small fw-bold text-muted">CARI KATA KUNCI</label>
+                        <input type="text" id="cariData" class="form-control form-control-sm" placeholder="Kode atau Deskripsi...">
                     </div>
-                    <div class="col-md-2 d-flex gap-1">
+                    <div class="col-md-3 d-flex gap-1">
                         <button onclick="loadData()" class="btn btn-primary btn-sm w-100" title="Terapkan Filter">
-                            <i class="fas fa-filter"></i>
+                            <i class="fas fa-filter me-1"></i> Filter
                         </button>
                         <button onclick="resetFilter()" class="btn btn-outline-secondary btn-sm w-100" title="Reset/Hari Ini">
-                            <i class="fas fa-undo"></i>
+                            <i class="fas fa-undo me-1"></i> Reset
                         </button>
                         <button onclick="exportToExcel()" class="btn btn-success btn-sm w-100" title="Download Excel">
-                            <i class="fas fa-file-excel"></i>
+                            <i class="fas fa-file-excel me-1"></i> Excel
                         </button>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-clipboard-list me-2 text-primary"></i> Rincian Data Nota
-                    </h5>
-                    <button onclick="window.print()" class="btn btn-outline-dark btn-sm rounded-pill px-3">
-                        <i class="fas fa-print me-1"></i> Cetak Laporan
-                    </button>
-                </div>
-                
                 <div class="table-responsive">
                     <table class="table table-hover align-middle text-center">
                         <thead class="table-dark">
@@ -146,9 +138,10 @@
                                 <th width="50">No</th>
                                 <th>Tanggal</th>
                                 <th>Kode</th>
-                                <th class="text-start">Deskripsi Perbaikan</th>
+                                <th class="text-start">Deskripsi</th>
                                 <th>Shift</th>
                                 <th>Qty</th>
+                                <th>Foto</th>
                                 <th class="action-col">Aksi</th>
                             </tr>
                         </thead>
@@ -164,7 +157,7 @@
                 © 2026 Powered by <span class="fw-bold text-dark">Ali Akatiri</span> 
                 <br>
                 <span class="badge bg-white text-muted shadow-sm mt-2 px-3 py-2 border">
-                    <i class="fas fa-check-circle text-success me-1"></i> Sistem Sinkron & Riwayat Aktif
+                    <i class="fas fa-check-circle text-success me-1"></i> Fitur Riwayat & Foto Aktif
                 </span>
             </p>
         </footer>
@@ -173,4 +166,3 @@
     <script src="index.js"></script>
 </body>
 </html>
-
