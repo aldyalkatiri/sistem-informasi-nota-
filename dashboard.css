@@ -1,162 +1,151 @@
-/* dashboard.css - FINAL FULL VERSION 2026 */
-
+/* dashboard.css - ULTIMATE GLASSMORPHISM VERSION 2026 */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
 
-:root {
-    --primary: #1e3a8a;    /* Biru Navy */
-    --secondary: #3b82f6;  /* Biru Terang */
-    --dark: #0f172a;       /* Slate Dark */
-    --light: #f8fafc;      /* Background Light */
-    --warning: #f59e0b;    /* Orange/Amber */
-    --success: #10b981;    /* Emerald Green */
-    --danger: #ef4444;     /* Red */
-}
-
-/* --- 1. Dasar & Navigasi --- */
-body {
-    background-color: var(--light);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    color: var(--dark);
+/* --- 1. Global Setup & Moving Background --- */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.navbar {
-    background: var(--primary) !important;
-    border-bottom: 4px solid var(--secondary);
-    padding: 0.8rem 0;
-}
-
-.navbar-brand {
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-/* --- 2. Kartu Statistik (Dinamis) --- */
-.card {
-    border-radius: 15px;
-    border: none;
-    transition: transform 0.2s ease;
-}
-
-.stat-card-total { 
-    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-    color: white; 
-}
-
-.stat-card-pagi { 
-    background: white; 
-    border: 1px solid #e2e8f0; 
-    color: var(--primary); 
-}
-
-.stat-card-malam { 
-    background: var(--dark); 
-    color: white; 
-}
-
-.stat-card-qty { 
-    background: var(--success); 
-    color: white; 
-}
-
-.card h2 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin: 0.5rem 0 0;
-}
-
-.card small {
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.65rem;
-    opacity: 0.8;
-}
-
-/* --- 3. Panel Input & Filter --- */
-.header-panel {
-    background: var(--primary);
+body.dashboard-body {
+    background: linear-gradient(-45deg, #0f172a, #1e3a8a, #1e40af, #0f172a);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: white;
-    padding: 1rem;
-    border-radius: 15px 15px 0 0;
-    text-align: center;
+    min-height: 100vh;
 }
 
-.form-label {
-    font-weight: 700;
-    font-size: 0.75rem;
-    color: #64748b;
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-.form-control, .form-select {
-    border-radius: 10px;
-    border: 2px solid #e2e8f0;
-    font-weight: 600;
-    color: var(--dark) !important;
+/* --- 2. Glassmorphism Components --- */
+.glass-nav {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.form-control:focus, .form-select:focus {
-    border-color: var(--secondary);
-    box-shadow: none;
+.glass-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.btn-save {
-    background: var(--primary);
-    border: none;
-    padding: 0.8rem;
-    font-weight: 800;
-    border-radius: 10px;
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
-.btn-save:hover {
-    background: var(--dark);
-    transform: translateY(-2px);
-}
-
-/* --- 4. Tabel & Badge --- */
-.table thead th {
-    background-color: var(--dark) !important;
+/* --- 3. Input & Form Styling (Glass Style) --- */
+.glass-input {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
     color: white !important;
-    font-size: 0.75rem;
+    border-radius: 12px !important;
+    font-weight: 500;
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: #0dcaf0 !important;
+    box-shadow: 0 0 15px rgba(13, 202, 240, 0.3);
+}
+
+select.glass-input option {
+    background: #1e3a8a; /* Warna background option select */
+    color: white;
+}
+
+/* --- 4. Typography & Stats --- */
+.fw-800 { font-weight: 800; }
+.letter-spacing-1 { letter-spacing: 1.5px; }
+
+#statTotal, #statPagi, #statMalam, #statTotalQty {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* --- 5. Table Customization --- */
+.table {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.glass-thead {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.glass-thead th {
+    border: none !important;
     text-transform: uppercase;
-    padding: 1rem;
-    border: none;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 15px !important;
 }
 
-#tabelNota td {
-    font-weight: 600;
-    color: var(--dark) !important;
-    padding: 1rem;
-    border-bottom: 1px solid #f1f5f9;
+#tabelNota tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
 }
 
-.badge-pagi {
-    background-color: #fef3c7 !important;
-    color: #92400e !important;
-    border: 1px solid var(--warning) !important;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 800;
+#tabelNota tr:hover {
+    background: rgba(255, 255, 255, 0.03);
 }
 
-.badge-malam {
-    background-color: #1e293b !important;
-    color: #ffffff !important;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 800;
+/* --- 6. Badges & Glow Buttons --- */
+.bg-warning { /* Shift Pagi Glow */
+    background: #fbbf24 !important;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
 }
 
-/* --- 5. Responsivitas & Cetak --- */
+.bg-dark { /* Shift Malam Glow */
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+.shadow-glow {
+    box-shadow: 0 5px 20px rgba(13, 202, 240, 0.4);
+    transition: 0.3s;
+}
+
+.shadow-glow:hover {
+    box-shadow: 0 8px 25px rgba(13, 202, 240, 0.6);
+    transform: scale(1.01);
+}
+
+/* --- 7. Chart Container Styling --- */
+canvas {
+    filter: drop-shadow(0 0 10px rgba(13, 202, 240, 0.1));
+}
+
+/* --- 8. Scrollbar Customization --- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0dcaf0;
+}
+
+/* --- Responsive Fix --- */
 @media (max-width: 768px) {
-    .card h2 { font-size: 1.8rem; }
-    .btn-sm { padding: 0.5rem; }
-}
-
-@media print {
-    .navbar, #adminPanel, .action-col, .row.g-2, footer {
-        display: none !important;
-    }
-    .card { box-shadow: none !important; border: 1px solid #eee; }
-    body { background: white; }
+    .glass-card { padding: 1.5rem !important; }
+    h2 { font-size: 1.5rem; }
 }
