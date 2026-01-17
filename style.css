@@ -1,10 +1,8 @@
-/* style.css - Login Styles */
+/* style.css - Gunakan kode lama Anda dan tambahkan/update bagian ini */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0; padding: 0; box-sizing: border-box;
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
@@ -39,16 +37,10 @@ body.login-body {
 }
 
 .brand-icon {
-    width: 65px;
-    height: 65px;
-    background: white;
-    color: #1e3a8a;
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    margin: 0 auto 20px;
+    width: 65px; height: 65px; background: white;
+    color: #1e3a8a; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 20px;
 }
 
 .input-group-custom {
@@ -56,12 +48,21 @@ body.login-body {
     margin-bottom: 15px;
 }
 
-.input-group-custom i {
+.input-group-custom i:first-child {
     position: absolute;
-    left: 15px;
-    top: 50%;
+    left: 15px; top: 50%;
     transform: translateY(-50%);
     color: rgba(255, 255, 255, 0.6);
+}
+
+/* Style Baru: Ikon Mata */
+.show-hide-eye {
+    position: absolute;
+    right: 15px; top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    pointer-events: auto !important;
 }
 
 .input-group-custom input {
@@ -74,30 +75,17 @@ body.login-body {
     outline: none;
 }
 
-.input-group-custom input:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: white;
-}
-
 .btn-login {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    background: white;
-    color: #1e3a8a;
-    font-weight: 700;
-    cursor: pointer;
+    width: 100%; padding: 12px; border: none;
+    border-radius: 12px; background: white;
+    color: #1e3a8a; font-weight: 700;
     transition: 0.3s;
 }
 
-.btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px rgba(255,255,255,0.2);
+.btn-login:disabled {
+    background: rgba(255,255,255,0.5);
+    cursor: not-allowed;
 }
 
-.error-msg {
-    color: #ff9494;
-    font-size: 13px;
-    display: none;
-}
+.error-msg { color: #ff9494; font-size: 13px; display: none; }
+.footer-credit span { font-weight: 700; color: white; }
