@@ -1,134 +1,135 @@
-/* dashboard.css - ULTIMATE GLASSMORPHISM VERSION 2026 */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+/* dashboard.css - HIGH CONTRAST PROFESSIONAL DARK */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
-/* --- 1. Global Setup & Moving Background --- */
+/* --- 1. Global Setup --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 body.dashboard-body {
-    background: linear-gradient(-45deg, #0f172a, #1e3a8a, #1e40af, #0f172a);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    color: white;
+    background-color: #0f172a; /* Navy Gelap Solid */
+    color: #f8fafc; /* Teks Putih Terang */
     min-height: 100vh;
 }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* --- 2. Navbar Solid --- */
+.dashboard-nav {
+    background-color: #1e293b !important; /* Abu-abu Kebiruan Pekat */
+    border-bottom: 2px solid #334155;
+    padding: 15px 0;
 }
 
-/* --- 2. Glassmorphism Components --- */
-.glass-nav {
-    background: rgba(255, 255, 255, 0.03) !important;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.navbar-brand {
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
 }
 
-.glass-card {
-    background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 20px !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.glass-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* --- 3. Input & Form Styling (Glass Style) --- */
-.glass-input {
-    background: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    color: white !important;
+/* --- 3. Card Statistik (Solid & Bold) --- */
+.stat-card {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
     border-radius: 12px !important;
-    font-weight: 500;
+    color: white !important;
 }
 
-.glass-input:focus {
-    background: rgba(255, 255, 255, 0.12) !important;
-    border-color: #0dcaf0 !important;
-    box-shadow: 0 0 15px rgba(13, 202, 240, 0.3);
+.stat-card h2 {
+    color: #3b82f6; /* Angka Biru Terang agar menonjol */
+    font-size: 2.2rem;
+    margin-bottom: 0;
 }
 
-select.glass-input option {
-    background: #1e3a8a; /* Warna background option select */
+.stat-card small {
+    letter-spacing: 1px;
+    color: #94a3b8 !important; /* Abu-abu Terang */
+}
+
+/* --- 4. Form Input (High Contrast) --- */
+.custom-input {
+    background-color: #0f172a !important; /* Latar input gelap pekat */
+    border: 1px solid #475569 !important; /* Border tegas */
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 10px 12px;
+}
+
+.custom-input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+    outline: none;
+}
+
+/* Warna teks di dalam select option */
+select.custom-input option {
+    background-color: #1e293b;
     color: white;
 }
 
-/* --- 4. Typography & Stats --- */
-.fw-800 { font-weight: 800; }
-.letter-spacing-1 { letter-spacing: 1.5px; }
-
-#statTotal, #statPagi, #statMalam, #statTotalQty {
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+/* --- 5. Table Styling (Sharp & Clear) --- */
+.custom-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
 }
 
-/* --- 5. Table Customization --- */
-.table {
-    color: rgba(255, 255, 255, 0.9) !important;
+.custom-table thead {
+    background-color: #334155 !important;
 }
 
-.glass-thead {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.glass-thead th {
-    border: none !important;
+.custom-table th {
+    color: #f8fafc !important;
+    font-weight: 700 !important;
     text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
+    font-size: 0.8rem;
     padding: 15px !important;
+    border: none !important;
 }
 
-#tabelNota tr {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: background 0.2s;
+.custom-table tbody td {
+    border-bottom: 1px solid #334155;
+    padding: 12px !important;
+    color: #cbd5e1 !important; /* Teks abu kebiruan terang */
+    font-size: 0.95rem;
 }
 
-#tabelNota tr:hover {
-    background: rgba(255, 255, 255, 0.03);
+.custom-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
 }
 
-/* --- 6. Badges & Glow Buttons --- */
-.bg-warning { /* Shift Pagi Glow */
-    background: #fbbf24 !important;
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+/* --- 6. Badges & Buttons --- */
+.badge {
+    padding: 6px 14px;
+    font-weight: 700;
+    border-radius: 5px;
+    text-transform: uppercase;
 }
 
-.bg-dark { /* Shift Malam Glow */
-    background: #0f172a !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+.bg-primary { background-color: #3b82f6 !important; }
+.bg-warning { background-color: #eab308 !important; color: #000 !important; }
+.bg-dark { background-color: #000000 !important; border: 1px solid #334155; }
+.bg-info { background-color: #06b6d4 !important; }
+
+.btn-primary {
+    background-color: #3b82f6;
+    border: none;
+    transition: 0.2s;
 }
 
-.shadow-glow {
-    box-shadow: 0 5px 20px rgba(13, 202, 240, 0.4);
-    transition: 0.3s;
+.btn-primary:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
 }
 
-.shadow-glow:hover {
-    box-shadow: 0 8px 25px rgba(13, 202, 240, 0.6);
-    transform: scale(1.01);
-}
-
-/* --- 7. Chart Container Styling --- */
+/* --- 7. Grafik Container --- */
 canvas {
-    filter: drop-shadow(0 0 10px rgba(13, 202, 240, 0.1));
+    max-width: 100%;
 }
 
-/* --- 8. Scrollbar Customization --- */
+/* --- 8. Scrollbar --- */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -136,16 +137,16 @@ canvas {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    background: #334155;
+    border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #0dcaf0;
+    background: #475569;
 }
 
-/* --- Responsive Fix --- */
+/* Responsive Fixes */
 @media (max-width: 768px) {
-    .glass-card { padding: 1.5rem !important; }
-    h2 { font-size: 1.5rem; }
+    .stat-card h2 { font-size: 1.8rem; }
+    .custom-table { font-size: 0.85rem; }
 }
