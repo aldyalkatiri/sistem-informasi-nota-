@@ -1,152 +1,44 @@
-/* dashboard.css - HIGH CONTRAST PROFESSIONAL DARK */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-
-/* --- 1. Global Setup --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+/* CLEAN ENTERPRISE THEME */
+body.enterprise-bg {
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body.dashboard-body {
-    background-color: #0f172a; /* Navy Gelap Solid */
-    color: #f8fafc; /* Teks Putih Terang */
-    min-height: 100vh;
-}
+.bg-primary { background-color: #2563eb !important; }
 
-/* --- 2. Navbar Solid --- */
-.dashboard-nav {
-    background-color: #1e293b !important; /* Abu-abu Kebiruan Pekat */
-    border-bottom: 2px solid #334155;
-    padding: 15px 0;
-}
+/* Statistik Cards */
+.card { border-radius: 12px; }
+.shadow-sm { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important; }
 
-.navbar-brand {
-    font-size: 1.25rem;
+/* Table Head */
+.table thead th {
+    font-size: 12px;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
+    color: #64748b;
+    border-bottom: 2px solid #f1f5f9;
 }
 
-/* --- 3. Card Statistik (Solid & Bold) --- */
-.stat-card {
-    background-color: #1e293b !important;
-    border: 1px solid #334155 !important;
-    border-radius: 12px !important;
-    color: white !important;
+/* Badges */
+.badge { padding: 8px 12px; border-radius: 6px; font-weight: 600; }
+.bg-pagi { background-color: #fef3c7 !important; color: #92400e !important; }
+.bg-malam { background-color: #1e293b !important; color: #ffffff !important; }
+.bg-kode { background-color: #dbeafe !important; color: #1e40af !important; }
+
+/* Form Elements */
+.form-control, .form-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
 }
 
-.stat-card h2 {
-    color: #3b82f6; /* Angka Biru Terang agar menonjol */
-    font-size: 2.2rem;
-    margin-bottom: 0;
+.form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.stat-card small {
-    letter-spacing: 1px;
-    color: #94a3b8 !important; /* Abu-abu Terang */
-}
-
-/* --- 4. Form Input (High Contrast) --- */
-.custom-input {
-    background-color: #0f172a !important; /* Latar input gelap pekat */
-    border: 1px solid #475569 !important; /* Border tegas */
-    color: #ffffff !important;
-    border-radius: 8px !important;
-    padding: 10px 12px;
-}
-
-.custom-input:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
-    outline: none;
-}
-
-/* Warna teks di dalam select option */
-select.custom-input option {
-    background-color: #1e293b;
-    color: white;
-}
-
-/* --- 5. Table Styling (Sharp & Clear) --- */
-.custom-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 100%;
-}
-
-.custom-table thead {
-    background-color: #334155 !important;
-}
-
-.custom-table th {
-    color: #f8fafc !important;
-    font-weight: 700 !important;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    padding: 15px !important;
-    border: none !important;
-}
-
-.custom-table tbody td {
-    border-bottom: 1px solid #334155;
-    padding: 12px !important;
-    color: #cbd5e1 !important; /* Teks abu kebiruan terang */
-    font-size: 0.95rem;
-}
-
-.custom-table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.03);
-}
-
-/* --- 6. Badges & Buttons --- */
-.badge {
-    padding: 6px 14px;
-    font-weight: 700;
-    border-radius: 5px;
-    text-transform: uppercase;
-}
-
-.bg-primary { background-color: #3b82f6 !important; }
-.bg-warning { background-color: #eab308 !important; color: #000 !important; }
-.bg-dark { background-color: #000000 !important; border: 1px solid #334155; }
-.bg-info { background-color: #06b6d4 !important; }
-
-.btn-primary {
-    background-color: #3b82f6;
-    border: none;
-    transition: 0.2s;
-}
-
-.btn-primary:hover {
-    background-color: #2563eb;
-    transform: translateY(-1px);
-}
-
-/* --- 7. Grafik Container --- */
-canvas {
-    max-width: 100%;
-}
-
-/* --- 8. Scrollbar --- */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: #0f172a;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #475569;
-}
-
-/* Responsive Fixes */
-@media (max-width: 768px) {
-    .stat-card h2 { font-size: 1.8rem; }
-    .custom-table { font-size: 0.85rem; }
-}
+/* Animations */
+.card { transition: transform 0.2s ease; }
+.card:hover { transform: translateY(-2px); }
