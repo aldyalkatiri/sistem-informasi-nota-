@@ -1,44 +1,146 @@
-/* CLEAN ENTERPRISE THEME */
+/* dashboard.css - CLEAN ENTERPRISE THEME FINAL */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- 1. Global Setup --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body.enterprise-bg {
-    background-color: #f8fafc;
-    color: #1e293b;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f4f6; /* Abu-abu sangat muda bersih */
+    color: #1f2937;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
 }
 
-.bg-primary { background-color: #2563eb !important; }
+/* --- 2. Navbar Styling --- */
+.navbar {
+    padding: 0.8rem 0;
+    border-bottom: 2px solid rgba(0,0,0,0.05);
+}
 
-/* Statistik Cards */
-.card { border-radius: 12px; }
-.shadow-sm { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important; }
-
-/* Table Head */
-.table thead th {
-    font-size: 12px;
-    text-transform: uppercase;
+.navbar-brand {
+    font-size: 1.1rem;
     letter-spacing: 0.5px;
-    color: #64748b;
-    border-bottom: 2px solid #f1f5f9;
 }
 
-/* Badges */
-.badge { padding: 8px 12px; border-radius: 6px; font-weight: 600; }
+/* --- 3. Statistik Card (Modern Shadow) --- */
+.card {
+    border-radius: 12px !important;
+    border: none !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+    font-size: 1.8rem;
+    color: #111827;
+}
+
+/* Warna Border Samping Kartu */
+.border-primary { border-left: 5px solid #2563eb !important; }
+.border-warning { border-left: 5px solid #f59e0b !important; }
+.border-info { border-left: 5px solid #06b6d4 !important; }
+.border-success { border-left: 5px solid #10b981 !important; }
+.border-danger { border-left: 5px solid #ef4444 !important; }
+
+/* --- 4. Table Styling --- */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background-color: #f9fafb !important;
+    color: #4b5563 !important;
+    font-weight: 700 !important;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 15px !important;
+    border-bottom: 2px solid #e5e7eb !important;
+}
+
+.table tbody td {
+    padding: 12px 15px !important;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+/* --- 5. Form & Input Styling --- */
+.form-control, .form-select {
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    font-size: 0.9rem !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    outline: none;
+}
+
+label.fw-bold {
+    color: #374151;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* --- 6. Badges (Modern Pill) --- */
+.badge {
+    padding: 6px 12px !important;
+    font-weight: 600 !important;
+    border-radius: 30px !important;
+    font-size: 0.75rem !important;
+}
+
+.bg-kode { background-color: #dbeafe !important; color: #1e40af !important; }
 .bg-pagi { background-color: #fef3c7 !important; color: #92400e !important; }
 .bg-malam { background-color: #1e293b !important; color: #ffffff !important; }
-.bg-kode { background-color: #dbeafe !important; color: #1e40af !important; }
 
-/* Form Elements */
-.form-control, .form-select {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 14px;
+/* --- 7. Buttons --- */
+.btn-primary { background-color: #2563eb !important; border: none !important; }
+.btn-primary:hover { background-color: #1d4ed8 !important; }
+
+.btn-danger { background-color: #ef4444 !important; border: none !important; }
+.btn-success { background-color: #10b981 !important; border: none !important; }
+
+/* --- 8. Navigasi Khusus Nota Bermasalah --- */
+#navMasalah {
+    animation: pulse 2s infinite;
 }
 
-.form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
-/* Animations */
-.card { transition: transform 0.2s ease; }
-.card:hover { transform: translateY(-2px); }
+/* --- 9. Custom Scrollbar --- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* --- 10. Responsive Fix --- */
+@media (max-width: 768px) {
+    .stat-card h3 { font-size: 1.5rem; }
+    .navbar-brand { font-size: 0.9rem; }
+}
