@@ -1,91 +1,74 @@
-/* style.css - Gunakan kode lama Anda dan tambahkan/update bagian ini */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+/* login.css - STYLE KHUSUS HALAMAN LOGIN */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-* {
-    margin: 0; padding: 0; box-sizing: border-box;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-}
-
-body.login-body {
+.login-page {
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0f172a);
-    background-size: 400% 400%;
-    animation: gradientShift 10s ease infinite;
-    overflow: hidden;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    font-family: 'Inter', sans-serif;
+    margin: 0;
 }
 
 .login-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 40px;
-    border-radius: 30px;
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 380px;
-    text-align: center;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    max-width: 420px;
 }
 
-.brand-icon {
-    width: 65px; height: 65px; background: white;
-    color: #1e3a8a; border-radius: 18px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px; margin: 0 auto 20px;
+.login-header h4 {
+    letter-spacing: 1px;
+    color: #1e293b;
 }
 
-.input-group-custom {
-    position: relative;
-    margin-bottom: 15px;
+.form-label-custom {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 6px;
+    display: block;
 }
 
-.input-group-custom i:first-child {
-    position: absolute;
-    left: 15px; top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.6);
+.input-group-text {
+    border: 1px solid #e2e8f0;
+    color: #94a3b8;
 }
 
-/* Style Baru: Ikon Mata */
-.show-hide-eye {
-    position: absolute;
-    right: 15px; top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: rgba(255, 255, 255, 0.6);
-    pointer-events: auto !important;
+.form-control {
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    font-size: 0.9rem;
 }
 
-.input-group-custom input {
-    width: 100%;
-    padding: 12px 15px 12px 45px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    color: white;
-    outline: none;
+.form-control:focus {
+    box-shadow: none;
+    border-color: #3b82f6;
 }
 
 .btn-login {
-    width: 100%; padding: 12px; border: none;
-    border-radius: 12px; background: white;
-    color: #1e3a8a; font-weight: 700;
-    transition: 0.3s;
+    background-color: #2563eb;
+    border: none;
+    color: white;
+    padding: 14px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 600;
 }
 
-.btn-login:disabled {
-    background: rgba(255,255,255,0.5);
-    cursor: not-allowed;
+.btn-login:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-.error-msg { color: #ff9494; font-size: 13px; display: none; }
-.footer-credit span { font-weight: 700; color: white; }
+@media (max-width: 480px) {
+    .login-card {
+        margin: 20px;
+        padding: 1.5rem;
+    }
+}
