@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Nota Ali Akatiri | Enterprise</title>
+    <title>Dashboard Utama | Ali Akatiri System</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,13 +17,19 @@
 <body class="enterprise-bg">
 
     <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
-        <div class="container d-flex justify-content-between">
+        <div class="container d-flex justify-content-between align-items-center">
             <span class="navbar-brand fw-bold">
                 <i class="fas fa-file-invoice-dollar me-2"></i> ALI AKATIRI SYSTEM
             </span>
-            <div class="d-flex align-items-center gap-3">
-                <span id="displayUser" class="text-white small fw-bold d-none d-md-inline"></span>
-                <button onclick="logout()" class="btn btn-light btn-sm fw-bold px-4 text-primary rounded-pill shadow-sm">
+            
+            <div class="d-flex align-items-center gap-2">
+                <a href="masalah.html" id="navMasalah" class="btn btn-warning btn-sm fw-bold px-3 shadow-sm d-none">
+                    <i class="fas fa-exclamation-triangle me-2"></i> NOTA BERMASALAH
+                </a>
+                
+                <span id="displayUser" class="text-white small fw-bold d-none d-md-inline ms-2"></span>
+                
+                <button onclick="logout()" class="btn btn-light btn-sm fw-bold px-4 text-primary rounded-pill shadow-sm ms-2">
                     LOGOUT
                 </button>
             </div>
@@ -33,7 +40,7 @@
         
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm border-start border-primary border-4 h-100">
+                <div class="card stat-card border-0 shadow-sm border-primary h-100">
                     <div class="card-body">
                         <p class="text-muted small fw-bold mb-1">TOTAL NOTA</p>
                         <h3 id="statTotal" class="fw-bold mb-0">0</h3>
@@ -41,7 +48,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm border-start border-warning border-4 h-100">
+                <div class="card stat-card border-0 shadow-sm border-warning h-100">
                     <div class="card-body">
                         <p class="text-warning small fw-bold mb-1">SHIFT PAGI</p>
                         <h3 id="statPagi" class="fw-bold mb-0">0</h3>
@@ -49,7 +56,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm border-start border-info border-4 h-100">
+                <div class="card stat-card border-0 shadow-sm border-info h-100">
                     <div class="card-body">
                         <p class="text-info small fw-bold mb-1">SHIFT MALAM</p>
                         <h3 id="statMalam" class="fw-bold mb-0">0</h3>
@@ -57,7 +64,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
+                <div class="card stat-card border-0 shadow-sm border-success h-100">
                     <div class="card-body">
                         <p class="text-success small fw-bold mb-1">TOTAL UNIT (QTY)</p>
                         <h3 id="statTotalQty" class="fw-bold mb-0">0</h3>
@@ -67,7 +74,7 @@
         </div>
 
         <div class="card border-0 shadow-sm mb-4 p-4">
-            <h6 class="fw-bold text-primary mb-4"><i class="fas fa-chart-line me-2"></i>STATISTIK KATEGORI PERBAIKAN</h6>
+            <h6 class="fw-bold text-primary mb-4"><i class="fas fa-chart-bar me-2"></i>STATISTIK PERBAIKAN UNIT</h6>
             <div style="height: 250px;">
                 <canvas id="chartPerbaikan"></canvas>
             </div>
@@ -75,7 +82,7 @@
 
         <div id="adminPanel" class="card border-0 shadow-sm mb-4 overflow-hidden">
             <div class="card-header bg-white border-bottom py-3">
-                <h6 class="fw-bold mb-0 text-primary">TAMBAH DATA BARU</h6>
+                <h6 class="fw-bold mb-0 text-primary"><i class="fas fa-plus-circle me-2"></i>TAMBAH DATA BARU</h6>
             </div>
             <div class="card-body p-4">
                 <form id="notaForm">
@@ -87,7 +94,7 @@
                         <div class="col-md-3">
                             <label class="small fw-bold">JENIS PERBAIKAN</label>
                             <select id="kodeJenis" class="form-select" required>
-                                <option value="" disabled selected>Pilih Kategori...</option>
+                                <option value="" disabled selected>Pilih...</option>
                                 <option value="SL">SL (BAN)</option>
                                 <option value="SD">SD (LAS)</option>
                                 <option value="SI">SI (MEKANIK PERAWATAN)</option>
@@ -105,11 +112,11 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="small fw-bold">QTY (UNIT)</label>
+                            <label class="small fw-bold">QTY</label>
                             <input type="number" id="jumlah" class="form-control" min="1" value="1" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="small fw-bold">UNGGAH FOTO</label>
+                            <label class="small fw-bold">UNGGAH FOTO NOTA</label>
                             <input type="file" id="fotoNota" class="form-control" accept="image/*">
                         </div>
                     </div>
@@ -124,7 +131,7 @@
             <div class="row g-2 mb-4 align-items-end">
                 <div class="col-md-3"><label class="small fw-bold text-muted">DARI</label><input type="date" id="filterTglMulai" class="form-control"></div>
                 <div class="col-md-3"><label class="small fw-bold text-muted">SAMPAI</label><input type="date" id="filterTglSelesai" class="form-control"></div>
-                <div class="col-md-4"><label class="small fw-bold text-muted">CARI</label><input type="text" id="cariData" class="form-control" placeholder="Cari kode/deskripsi..."></div>
+                <div class="col-md-4"><label class="small fw-bold text-muted">CARI KODE/KET</label><input type="text" id="cariData" class="form-control" placeholder="Cari data..."></div>
                 <div class="col-md-2 d-flex gap-1">
                     <button onclick="loadData()" class="btn btn-primary w-100 shadow-sm"><i class="fas fa-search"></i></button>
                     <button onclick="exportToExcel()" class="btn btn-success w-100 shadow-sm"><i class="fas fa-file-excel"></i></button>
@@ -137,7 +144,8 @@
                             <th>No</th><th>Tanggal</th><th>Kode</th><th class="text-start">Keterangan</th><th>Shift</th><th>Qty</th><th>Foto</th><th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelNota" class="text-center"></tbody>
+                    <tbody id="tabelNota" class="text-center">
+                        </tbody>
                 </table>
             </div>
         </div>
