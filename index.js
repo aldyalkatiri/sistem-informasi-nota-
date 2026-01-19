@@ -1,9 +1,12 @@
 /**
- * ALI AKATIRI SYSTEM - CORE LOGIC
- * Version: 2.2 Final (ID Sequence Fix for Excel)
+ * ALI AKATIRI SYSTEM - ONLINE VERSION (GOOGLE SHEETS)
+ * Version: 3.1 Final (Integrated)
  */
 
-// 1. KEAMANAN & INISIALISASI
+// 1. KONFIGURASI API GOOGLE SHEETS
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytwYwvh_8hVTeatMCEM0YC600LvzhW5kLh8IbMwM8x5zNVrxHnHrfieQJaMMkeqFtg/exec";
+
+// 2. KEAMANAN & INISIALISASI
 const currentUser = sessionStorage.getItem('userName') || "Administrator";
 const userRole = sessionStorage.getItem('role') || "staff";
 const isLoggedIn = sessionStorage.getItem('isLoggedIn');
@@ -12,7 +15,9 @@ if (!isLoggedIn) {
     window.location.href = 'index.html';
 }
 
-// 2. JALANKAN SAAT HALAMAN SIAP
+let myChart = null;
+
+// 3. JALANKAN SAAT HALAMAN SIAP
 document.addEventListener('DOMContentLoaded', () => {
     const displayUser = document.getElementById('displayUser');
     if (displayUser) displayUser.innerText = `Halo, ${currentUser}`;
@@ -22,19 +27,22 @@ document.addEventListener('DOMContentLoaded', () => {
         navMasalah.classList.remove('d-none');
     }
 
-    loadData();
+    loadData(); // Ambil data dari Google Sheets saat pertama kali buka
 });
 
-// 3. LOGIKA SIMPAN DATA (PERBAIKAN ID BERURUTAN)
+// 4. FUNGSI SIMPAN DATA KE GOOGLE SHEETS
 const notaForm = document.getElementById('notaForm');
 if (notaForm) {
     notaForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const databaseNota = JSON.parse(localStorage.getItem('daftarNota')) || [];
-
-        // --- PERBAIKAN LOGIKA ID: BERURUTAN 1, 2, 3... ---
-        const idBaru = databaseNota.length > 0 ? databaseNota[databaseNota.length - 1].id + 1 : 1;
+        // Tampilkan Loading
+        Swal.fire({
+            title: 'Sedang Menyimpan...',
+            text: 'Data sedang dikirim ke Google Sheets',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
 
         const tglNota = document.getElementById('tanggalNota').value;
         const kode = document.getElementById('kodeJenis').value;
@@ -44,7 +52,7 @@ if (notaForm) {
         const tglSistem = new Date().toISOString().split('T')[0];
 
         const notaBaru = {
-            id: idBaru, 
+            id: Date.now(), // ID Unik berbasis waktu
             tglNota: tglNota,
             tglInput: tglSistem,
             kode: kode,
@@ -54,29 +62,52 @@ if (notaForm) {
             penginput: currentUser
         };
 
-        databaseNota.push(notaBaru);
-        localStorage.setItem('daftarNota', JSON.stringify(databaseNota));
-
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil Disimpan',
-            text: `Data ke-${idBaru} berhasil dicatat`,
-            timer: 1500,
-            showConfirmButton: false
+        // Kirim data menggunakan metode POST ke Google Apps Script
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Diperlukan agar tidak terkena kebijakan CORS browser
+            cache: 'no-cache',
+            body: JSON.stringify(notaBaru)
+        })
+        .then(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Data tersimpan secara online di Google Sheets',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            this.reset();
+            // Beri jeda 1.5 detik agar Google Sheets memproses data sebelum di-refresh
+            setTimeout(loadData, 1500);
+        })
+        .catch(err => {
+            Swal.fire('Error!', 'Gagal terhubung ke Cloud. Periksa internet Anda.', 'error');
+            console.error(err);
         });
-
-        this.reset();
-        loadData();
     });
 }
 
-// 4. RENDER TABEL & STATISTIK
-let myChart = null; 
-
+// 5. FUNGSI AMBIL DATA (SINKRONISASI)
 function loadData() {
     const tableBody = document.getElementById('tabelNota');
-    let db = JSON.parse(localStorage.getItem('daftarNota')) || [];
     
+    // Fetch data dari Google Sheets melalui doGet di Apps Script
+    fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(databaseNota => {
+            renderSemua(databaseNota);
+        })
+        .catch(err => {
+            console.error('Error Load:', err);
+            // Jika gagal load online, bisa tampilkan pesan di tabel
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Gagal memuat data dari Cloud.</td></tr>';
+        });
+}
+
+// 6. RENDER TABEL & STATISTIK (LOGIKA UTAMA)
+function renderSemua(data) {
+    const tableBody = document.getElementById('tabelNota');
     tableBody.innerHTML = '';
     
     let totalQty = 0;
@@ -90,29 +121,28 @@ function loadData() {
     const currMonth = now.getMonth();
     const currYear = now.getFullYear();
 
-    const cari = document.getElementById('cariData').value.toLowerCase();
-    const dataFiltered = db.filter(item => {
-        return item.kode.toLowerCase().includes(cari) || 
-               item.keterangan.toLowerCase().includes(cari);
-    });
+    // Balik urutan data agar yang terbaru di atas
+    const dataSorted = data.slice().reverse();
 
-    dataFiltered.slice().reverse().forEach((nota, index) => {
-        totalQty += nota.qty;
+    dataSorted.forEach((nota, index) => {
+        // Hitung Statistik
+        totalQty += parseInt(nota.qty);
         if(nota.shift === 'PAGI') pagiCount++;
         if(nota.shift === 'MALAM') malamCount++;
         
         const dNota = new Date(nota.tglNota);
         if (dNota.getMonth() === currMonth && dNota.getFullYear() === currYear) {
-            qtyBulanIni += nota.qty;
+            qtyBulanIni += parseInt(nota.qty);
         } else if (dNota.getMonth() === (currMonth === 0 ? 11 : currMonth - 1)) {
-            qtyBulanLalu += nota.qty;
+            qtyBulanLalu += parseInt(nota.qty);
         }
 
-        chartLabels[nota.kode] = (chartLabels[nota.kode] || 0) + nota.qty;
+        chartLabels[nota.kode] = (chartLabels[nota.kode] || 0) + parseInt(nota.qty);
 
+        // Render Baris Tabel
         const row = `
             <tr>
-                <td class="text-muted fw-bold">#${nota.id}</td>
+                <td class="text-muted small">#${nota.id.toString().slice(-4)}</td>
                 <td>
                     <span class="tgl-nota-badge">${formatIndo(nota.tglNota)}</span>
                     <span class="tgl-input-badge">Input: ${formatIndo(nota.tglInput)}</span>
@@ -120,40 +150,42 @@ function loadData() {
                 <td><span class="badge-jenis">${nota.kode}</span></td>
                 <td class="text-start">${nota.keterangan}</td>
                 <td class="fw-bold">${nota.qty}</td>
-                <td>
-                    <button class="btn btn-sm btn-link text-danger p-0" onclick="hapusNota(${nota.id})">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
+                <td><small class="text-muted">${nota.penginput}</small></td>
             </tr>
         `;
         tableBody.insertAdjacentHTML('beforeend', row);
     });
 
-    // UPDATE UI
-    document.getElementById('statTotal').innerText = dataFiltered.length;
+    // UPDATE UI DASHBOARD
+    document.getElementById('statTotal').innerText = data.length;
     document.getElementById('statPagi').innerText = pagiCount;
     document.getElementById('statMalam').innerText = malamCount;
     document.getElementById('statTotalQty').innerText = totalQty;
     document.getElementById('statBulanIni').innerText = `${qtyBulanIni} UNIT`;
 
-    // UPDATE SUMMARY CARD
+    // UPDATE SUMMARY CARD (FEATURE 6)
+    updateSummaryCard(qtyBulanIni, qtyBulanLalu);
+    
+    // UPDATE GRAFIK
+    updateChart(chartLabels);
+}
+
+// 7. FUNGSI PEMBANTU (HELPER)
+function updateSummaryCard(ini, lalu) {
     const bandingElemen = document.getElementById('perbandinganBulan');
-    if (qtyBulanLalu === 0) {
-        bandingElemen.innerHTML = `<i class="fas fa-info"></i> Data bulan lalu belum tersedia.`;
+    if (lalu === 0) {
+        bandingElemen.innerHTML = `<i class="fas fa-info-circle"></i> Data bulan lalu belum tersedia.`;
     } else {
-        const selisih = qtyBulanIni - qtyBulanLalu;
-        const persen = ((selisih / qtyBulanLalu) * 100).toFixed(1);
+        const selisih = ini - lalu;
+        const persen = ((selisih / lalu) * 100).toFixed(1);
         bandingElemen.innerHTML = selisih >= 0 ? 
             `<i class="fas fa-arrow-up"></i> Naik <strong>${persen}%</strong> dari bulan lalu` : 
             `<i class="fas fa-arrow-down"></i> Turun <strong>${Math.abs(persen)}%</strong> dari bulan lalu`;
         if (selisih >= 0) bandingElemen.classList.add('text-warning');
+        else bandingElemen.classList.remove('text-warning');
     }
-
-    updateChart(chartLabels);
 }
 
-// 5. FUNGSI GRAFIK
 function updateChart(chartLabels) {
     const ctx = document.getElementById('chartPerbaikan').getContext('2d');
     if (myChart) myChart.destroy();
@@ -171,48 +203,9 @@ function updateChart(chartLabels) {
     });
 }
 
-// 6. FUNGSI EKSPOR EXCEL (ID AKAN RAPI)
-function exportToExcel() {
-    let database = JSON.parse(localStorage.getItem('daftarNota')) || [];
-    if (database.length === 0) return Swal.fire('Kosong', 'Tidak ada data.', 'info');
-    
-    // Pastikan ID dikirim sebagai angka biasa agar tidak berantakan
-    const dataUntukExcel = database.map(item => ({
-        "No ID": item.id,
-        "Tgl Nota": item.tglNota,
-        "Tgl Input": item.tglInput,
-        "Kode": item.kode,
-        "Keterangan": item.keterangan,
-        "Shift": item.shift,
-        "Qty": item.qty,
-        "Penginput": item.penginput
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(dataUntukExcel);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Laporan_AliAkatiri");
-    XLSX.writeFile(wb, `Laporan_AliAkatiri_${new Date().toLocaleDateString()}.xlsx`);
-}
-
 function formatIndo(dateStr) {
     if(!dateStr) return "-";
     return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-}
-
-function hapusNota(id) {
-    Swal.fire({
-        title: 'Hapus data?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            let db = JSON.parse(localStorage.getItem('daftarNota'));
-            db = db.filter(item => item.id !== id);
-            localStorage.setItem('daftarNota', JSON.stringify(db));
-            loadData();
-        }
-    });
 }
 
 function logout() {
