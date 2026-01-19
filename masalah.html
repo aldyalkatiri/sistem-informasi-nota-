@@ -7,176 +7,209 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="login.css"> <style>
-        :root {
-            --primary-blue: #0369a1;
-            --accent-red: #ef4444;
-            --bg-light: #f4f7fe;
-        }
-
-        body { 
-            background-color: var(--bg-light); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0;
-        }
-
-        /* Navbar Styling */
-        .navbar-custom { 
-            background: linear-gradient(90deg, #0c4a6e, #0369a1); 
-            color: white; 
-            padding: 15px 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Card & UI Elements */
-        .card { 
-            border: none; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); 
-            transition: transform 0.3s ease;
-        }
-
-        .card-header-custom {
-            background-color: transparent;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 20px 25px;
-        }
-
-        .btn-save {
-            background: var(--accent-red);
-            border: none;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-weight: 700;
-            transition: all 0.3s;
-        }
-
-        .btn-save:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3);
-        }
-
-        .badge-user {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        /* Table Styling */
-        .table-container { background: white; border-radius: 20px; overflow: hidden; }
-        .table thead { background-color: #f8fafc; }
-        .table th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; border: none; }
-        .table td { vertical-align: middle; color: #1e293b; border-top: 1px solid #f1f5f9; }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade { animation: fadeIn 0.5s ease-out; }
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .border-danger-custom { border-left: 5px solid #ef4444 !important; }
+        .text-danger-custom { color: #ef4444 !important; }
+        .btn-danger-save { background-color: #ef4444; border: none; color: white; font-weight: bold; }
+        .btn-danger-save:hover { background-color: #dc2626; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
     </style>
 </head>
-<body>
+<body class="enterprise-bg">
 
-    <nav class="navbar-custom d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <div class="bg-warning p-2 rounded-3 me-3">
-                <i class="fas fa-exclamation-triangle text-dark"></i>
+    <nav class="navbar navbar-dark shadow-sm mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span class="navbar-brand fw-bold">
+                <i class="fas fa-exclamation-triangle me-2 text-warning"></i> DATABASE NOTA BERMASALAH
+            </span>
+            
+            <div class="d-flex align-items-center gap-2">
+                <a href="dashboard.html" class="btn btn-light btn-sm fw-bold px-3 shadow-sm">
+                    <i class="fas fa-home me-1"></i> DASHBOARD
+                </a>
+                <button onclick="logout()" class="btn btn-outline-light btn-sm fw-bold px-3 rounded-pill ms-2">
+                    LOGOUT
+                </button>
             </div>
-            <div>
-                <h5 class="mb-0 fw-bold">DATABASE NOTA BERMASALAH</h5>
-                <small class="opacity-75">Ali Akatiri Enterprise System</small>
-            </div>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="dashboard.html" class="btn btn-light btn-sm fw-bold px-3 rounded-pill">
-                <i class="fas fa-home me-1"></i> DASHBOARD
-            </a>
-            <button onclick="logout()" class="btn btn-outline-light btn-sm fw-bold px-3 rounded-pill">
-                <i class="fas fa-sign-out-alt me-1"></i> LOGOUT
-            </button>
         </div>
     </nav>
 
-    <div class="container py-5 animate-fade">
-        <div class="row">
-            <div class="col-lg-12 mb-4">
-                <div class="card p-4">
-                    <div class="d-flex align-items-center mb-4">
-                        <i class="fas fa-file-circle-exclamation fa-2x text-danger me-3"></i>
-                        <h5 class="fw-bold mb-0">LAPORKAN TEMUAN BARU</h5>
-                    </div>
-                    
-                    <form id="formMasalah">
-                        <div class="row g-4">
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold small">TANGGAL TEMUAN</label>
-                                <input type="date" id="tglMasalah" class="form-control form-control-lg border-2 shadow-sm" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small">DESKRIPSI KESALAHAN / MASALAH</label>
-                                <div class="input-group shadow-sm">
-                                    <span class="input-group-text bg-white border-2 border-end-0"><i class="fas fa-keyboard text-muted"></i></span>
-                                    <input type="text" id="descMasalah" class="form-control form-control-lg border-2 border-start-0" placeholder="Contoh: Nota #009 salah input jumlah barang" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold small">UPLOAD FOTO BUKTI</label>
-                                <input type="file" id="fotoMasalah" class="form-control form-control-lg border-2 shadow-sm">
-                            </div>
-                            <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-save w-100 shadow-lg">
-                                    <i class="fas fa-save me-2"></i> SIMPAN KE DALAM RIWAYAT
-                                </button>
-                            </div>
+    <div class="container mb-5">
+        
+        <div class="card border-0 shadow-sm mb-4 overflow-hidden border-danger-custom">
+            <div class="card-header bg-white border-bottom py-3">
+                <h6 class="fw-bold mb-0 text-danger-custom"><i class="fas fa-plus-circle me-2"></i>INPUT TEMUAN NOTA BERMASALAH</h6>
+            </div>
+            <div class="card-body p-4">
+                <form id="formMasalah">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="small fw-bold text-muted">TANGGAL PADA NOTA</label>
+                            <input type="date" id="tglNotaBermasalah" class="form-control border-danger" required>
                         </div>
-                    </form>
-                </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-muted">DESKRIPSI KESALAHAN / MASALAH</label>
+                            <input type="text" id="descMasalah" class="form-control border-danger" placeholder="Contoh: Nota #102 salah input QTY, harusnya 5 tertulis 50" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="small fw-bold text-muted">UNGGAH BUKTI FOTO</label>
+                            <input type="file" id="fotoMasalah" class="form-control border-danger">
+                        </div>
+                        <div class="col-12 mt-3 text-end">
+                            <button type="submit" class="btn btn-danger-save px-5 py-2">
+                                <i class="fas fa-save me-2"></i> SIMPAN KE DAFTAR MASALAH
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold mb-0 text-primary"><i class="fas fa-history me-2"></i>DAFTAR NOTA BERMASALAH</h6>
+                <div class="small fw-bold text-muted">TOTAL: <span id="countMasalah" class="text-danger">0</span> LAPORAN</div>
             </div>
 
-            <div class="col-lg-12">
-                <div class="card table-container">
-                    <div class="card-header-custom d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0 text-primary">
-                            <i class="fas fa-list-ul me-2"></i> RIWAYAT LAPORAN
-                        </h5>
-                        <div class="text-muted small fw-semibold">
-                            Total: <span id="countMasalah" class="text-danger">0</span> Laporan
-                        </div>
-                    </div>
-                    
-                    <div class="table-responsive p-3">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th class="ps-3">NO</th>
-                                    <th>TANGGAL</th>
-                                    <th>DESKRIPSI MASALAH</th>
-                                    <th>PELAPOR</th>
-                                    <th>FOTO</th>
-                                    <th class="text-center">AKSI</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bodyTabelMasalah">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr class="text-center small text-uppercase">
+                            <th width="50">No</th>
+                            <th>Tanggal Nota</th>
+                            <th>Tanggal Input</th>
+                            <th class="text-start">Deskripsi Masalah</th>
+                            <th>Pelapor</th>
+                            <th>Foto</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyTabelMasalah" class="text-center">
+                        </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <div class="text-center pb-5">
-        <p class="text-muted small">© 2026 Ali Akatiri System - Professional Digital Ledger</p>
+        <small class="text-muted">© 2026 Ali Akatiri System - Laporan Masalah v1.0</small>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <script src="masalah.js"></script>
+    <script>
+        // Ambil Data User dari Session
+        const userAktif = sessionStorage.getItem('userName') || "Admin";
+
+        // 1. FUNGSI RENDER TABEL
+        function tampilkanData() {
+            const tableBody = document.getElementById('bodyTabelMasalah');
+            const dataMasalah = JSON.parse(localStorage.getItem('dataMasalah')) || [];
+            const countDisplay = document.getElementById('countMasalah');
+
+            tableBody.innerHTML = '';
+            countDisplay.innerText = dataMasalah.length;
+
+            if (dataMasalah.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="py-5 text-muted small">Belum ada laporan nota bermasalah.</td></tr>';
+                return;
+            }
+
+            // Render Terbalik (Terbaru di atas)
+            [...dataMasalah].reverse().forEach((item, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><span class="tgl-nota-badge">${formatTgl(item.tglNota)}</span></td>
+                        <td><span class="tgl-input-badge">Input: ${formatTgl(item.tglInput)}</span></td>
+                        <td class="text-start small" style="max-width: 300px;">${item.deskripsi}</td>
+                        <td><span class="badge bg-light text-primary border">${item.pelapor}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" onclick="lihatFoto()">
+                                <i class="fas fa-image"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-link text-danger p-0" onclick="hapusMasalah(${item.id})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        // 2. LOGIKA SIMPAN DATA
+        document.getElementById('formMasalah').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const tglNota = document.getElementById('tglNotaBermasalah').value;
+            const desc = document.getElementById('descMasalah').value;
+            const tglSistem = new Date().toISOString().split('T')[0];
+
+            const dataBaru = {
+                id: Date.now(),
+                tglNota: tglNota,
+                tglInput: tglSistem,
+                deskripsi: desc,
+                pelapor: userAktif
+            };
+
+            let database = JSON.parse(localStorage.getItem('dataMasalah')) || [];
+            database.push(dataBaru);
+            localStorage.setItem('dataMasalah', JSON.stringify(database));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Masalah Dicatat',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            this.reset();
+            tampilkanData();
+        });
+
+        // 3. FUNGSI PENDUKUNG
+        function formatTgl(str) {
+            if(!str) return "-";
+            return new Date(str).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        }
+
+        function hapusMasalah(id) {
+            Swal.fire({
+                title: 'Hapus Laporan?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Ya, Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let db = JSON.parse(localStorage.getItem('dataMasalah'));
+                    db = db.filter(x => x.id !== id);
+                    localStorage.setItem('dataMasalah', JSON.stringify(db));
+                    tampilkanData();
+                }
+            });
+        }
+
+        function lihatFoto() {
+            Swal.fire({
+                title: 'Bukti Foto',
+                imageUrl: 'https://via.placeholder.com/400x300?text=Preview+Foto+Nota',
+                imageAlt: 'Bukti Nota'
+            });
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        // Jalankan saat load
+        document.addEventListener('DOMContentLoaded', tampilkanData);
+    </script>
 </body>
 </html>
