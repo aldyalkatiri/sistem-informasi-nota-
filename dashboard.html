@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Utama | Nota ManagementSystem</title>
+    <title>Dashboard Utama | Ali Akatiri System</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -28,8 +28,8 @@
                 </a>
                 
                 <div class="ms-3 text-white d-none d-md-block text-end">
-                    <div id="displayUser" class="small fw-bold mb-0">Memuat Pengguna...</div>
-                    <span class="badge bg-success" style="font-size: 0.6rem;">SISTEM ONLINE</span>
+                    <div id="displayUser" class="small fw-bold mb-0">Memuat...</div>
+                    <span class="badge bg-success" style="font-size: 0.6rem;">SISTEM AKTIF</span>
                 </div>
                 
                 <button onclick="logout()" class="btn btn-light btn-sm fw-bold px-4 text-primary rounded-pill shadow-sm ms-2">
@@ -42,142 +42,152 @@
     <div class="container mb-5">
         
         <div class="row mb-4">
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card border-0 shadow-sm border-start border-primary border-4 h-100">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm bg-primary text-white overflow-hidden" style="border-radius: 20px;">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-center position-relative">
+                        <div style="z-index: 2;">
+                            <h6 class="text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">
+                                Performa Perbaikan Bulan Ini
+                            </h6>
+                            <h1 id="statBulanIni" class="fw-800 mb-0" style="font-size: 2.5rem;">0 UNIT</h1>
+                            <p class="mb-0 mt-2 fw-medium" id="perbandinganBulan">
+                                <i class="fas fa-spinner fa-spin me-1"></i> Menghitung perbandingan...
+                            </p>
+                        </div>
+                        <div class="position-absolute end-0 bottom-0 opacity-25 me-4 mb-2" style="font-size: 6rem; z-index: 1;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4 g-3">
+            <div class="col-md-3">
+                <div class="card stat-card border-0 shadow-sm border-start border-primary border-4">
                     <div class="card-body">
                         <p class="text-muted small fw-bold mb-1">TOTAL NOTA</p>
                         <h3 id="statTotal" class="fw-bold mb-0 text-primary">0</h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card border-0 shadow-sm border-start border-warning border-4 h-100">
+            <div class="col-md-3">
+                <div class="card stat-card border-0 shadow-sm border-start border-warning border-4">
                     <div class="card-body">
                         <p class="text-warning small fw-bold mb-1">SHIFT PAGI</p>
                         <h3 id="statPagi" class="fw-bold mb-0">0</h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card border-0 shadow-sm border-start border-info border-4 h-100">
+            <div class="col-md-3">
+                <div class="card stat-card border-0 shadow-sm border-start border-info border-4">
                     <div class="card-body">
                         <p class="text-info small fw-bold mb-1">SHIFT MALAM</p>
                         <h3 id="statMalam" class="fw-bold mb-0">0</h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card border-0 shadow-sm border-start border-success border-4 h-100">
+            <div class="col-md-3">
+                <div class="card stat-card border-0 shadow-sm border-start border-success border-4">
                     <div class="card-body">
                         <p class="text-success small fw-bold mb-1">TOTAL UNIT (QTY)</p>
-                        <h3 id="statTotalQty" class="fw-bold mb-0 text-success">0</h3>
+                        <h3 id="statTotalQty" class="fw-bold mb-0">0</h3>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm mb-4 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold text-primary mb-0"><i class="fas fa-chart-bar me-2"></i>STATISTIK PERBAIKAN UNIT</h6>
-                <span class="badge bg-light text-dark fw-normal" style="font-size: 0.7rem;">Data Berdasarkan QTY</span>
-            </div>
-            <div style="height: 300px;">
-                <canvas id="chartPerbaikan"></canvas>
-            </div>
-        </div>
-
-        <div id="adminPanel" class="card border-0 shadow-sm mb-4 overflow-hidden">
-            <div class="card-header bg-white border-bottom py-3">
-                <h6 class="fw-bold mb-0 text-primary"><i class="fas fa-plus-circle me-2"></i>TAMBAH DATA NOTA HARIAN</h6>
-            </div>
-            <div class="card-body p-4">
-                <form id="notaForm">
-                    <div class="row g-3">
-                        <div class="col-md-2">
-                            <label class="small fw-bold">TANGGAL NOTA</label>
-                            <input type="date" id="tanggalNota" class="form-control" required>
-                            <div class="form-text" style="font-size: 0.65rem;">Sesuai fisik nota</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="small fw-bold">JENIS PERBAIKAN</label>
-                            <select id="kodeJenis" class="form-select" required>
-                                <option value="" disabled selected>Pilih Jenis...</option>
-                                <option value="SL">SL (BAN)</option>
-                                <option value="SD">SD (LAS)</option>
-                                <option value="SI">SI (MEKANIK PERAWATAN)</option>
-                                <option value="SX">SX (MEKANIK)</option>
-                                <option value="SY">SY (GRASSES)</option>
-                                <option value="SG">SG (ELEKTRIK)</option>
-                                <option value="ST">ST (PERAWATAN ALAT BERAT)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="small fw-bold">SHIFT</label>
-                            <select id="shift" class="form-select">
-                                <option value="PAGI">PAGI</option>
-                                <option value="MALAM">MALAM</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="small fw-bold">JUMLAH (QTY)</label>
-                            <input type="number" id="jumlah" class="form-control" min="1" value="1" required>
-                        </div>
-                        <div class="col-md-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">
-                                <i class="fas fa-save me-2"></i> SIMPAN NOTA
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0 text-primary"><i class="fas fa-plus-circle me-2"></i>INPUT DATA BARU</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="notaForm">
+                            <div class="mb-3">
+                                <label class="small fw-bold text-muted">TANGGAL NOTA (FISIK)</label>
+                                <input type="date" id="tanggalNota" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold text-muted">JENIS PERBAIKAN</label>
+                                <select id="kodeJenis" class="form-select" required>
+                                    <option value="" disabled selected>Pilih...</option>
+                                    <option value="SL">SL (BAN)</option>
+                                    <option value="SD">SD (LAS)</option>
+                                    <option value="SI">SI (MEKANIK PERAWATAN)</option>
+                                    <option value="SX">SX (MEKANIK)</option>
+                                    <option value="SY">SY (GRASSES)</option>
+                                    <option value="SG">SG (ELEKTRIK)</option>
+                                    <option value="ST">ST (PERAWATAN ALAT BERAT)</option>
+                                </select>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="small fw-bold text-muted">SHIFT</label>
+                                    <select id="shift" class="form-select">
+                                        <option value="PAGI">PAGI</option>
+                                        <option value="MALAM">MALAM</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="small fw-bold text-muted">QTY UNIT</label>
+                                    <input type="number" id="jumlah" class="form-control" min="1" value="1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow-sm">
+                                <i class="fas fa-save me-2"></i> SIMPAN DATA
                             </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4">
+                    <h6 class="fw-bold text-primary mb-3"><i class="fas fa-chart-pie me-2"></i>PROPORSI UNIT</h6>
+                    <div style="height: 200px;">
+                        <canvas id="chartPerbaikan"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <div class="row g-2 mb-4 align-items-end">
+                        <div class="col-md-5">
+                            <label class="small fw-bold text-muted">PENCARIAN DATA</label>
+                            <input type="text" id="cariData" class="form-control form-control-sm" placeholder="Cari kode atau keterangan...">
+                        </div>
+                        <div class="col-md-7 d-flex gap-1">
+                            <button onclick="loadData()" class="btn btn-primary btn-sm px-3 shadow-sm"><i class="fas fa-search me-1"></i> CARI</button>
+                            <button onclick="exportToExcel()" class="btn btn-success btn-sm px-3 shadow-sm"><i class="fas fa-file-excel me-1"></i> EXCEL</button>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
 
-        <div class="card border-0 shadow-sm p-4">
-            <div class="row g-2 mb-4 align-items-end">
-                <div class="col-md-3">
-                    <label class="small fw-bold text-muted">DARI TANGGAL</label>
-                    <input type="date" id="filterTglMulai" class="form-control form-control-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr class="text-center small">
+                                    <th>NO</th>
+                                    <th>TANGGAL NOTA</th>
+                                    <th>KODE</th>
+                                    <th class="text-start">KETERANGAN</th>
+                                    <th>QTY</th>
+                                    <th>AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelNota" class="text-center">
+                                </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="small fw-bold text-muted">SAMPAI TANGGAL</label>
-                    <input type="date" id="filterTglSelesai" class="form-control form-control-sm">
-                </div>
-                <div class="col-md-4">
-                    <label class="small fw-bold text-muted">CARI DATA</label>
-                    <input type="text" id="cariData" class="form-control form-control-sm" placeholder="Ketik Kode atau Keterangan...">
-                </div>
-                <div class="col-md-2 d-flex gap-1">
-                    <button onclick="loadData()" class="btn btn-primary w-100 btn-sm"><i class="fas fa-search"></i></button>
-                    <button onclick="exportToExcel()" class="btn btn-success w-100 btn-sm"><i class="fas fa-file-excel"></i></button>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr class="text-center small">
-                            <th width="50">NO</th>
-                            <th>TANGGAL NOTA</th>
-                            <th>TANGGAL INPUT</th>
-                            <th>KODE</th>
-                            <th class="text-start">KETERANGAN PERBAIKAN</th>
-                            <th>SHIFT</th>
-                            <th>QTY</th>
-                            <th>AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelNota" class="text-center">
-                        </tbody>
-                </table>
             </div>
         </div>
     </div>
 
-    <footer class="text-center pb-5">
-        <p class="text-muted small">© 2026 Ali Akatiri Enterprise - Digital Ledger System v2.0</p>
+    <footer class="text-center pb-5 mt-4">
+        <p class="text-muted small">© 2026 Ali Akatiri Enterprise | System Admin v2.1 Final</p>
     </footer>
 
     <script src="index.js"></script>
 </body>
 </html>
-
