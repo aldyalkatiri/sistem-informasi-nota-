@@ -1,196 +1,163 @@
 /**
- * ALI AKATIRI SYSTEM - ONLINE VERSION (FINAL FIX)
- * Fitur: Sinkronisasi Cloud, Statistik Real-time, & Export Excel Rapi
+ * ALI AKATIRI SYSTEM - CORE LOGIC
+ * Version: 2.2 Final (ID Sequence Fix for Excel)
  */
 
-// 1. KONFIGURASI API (URL yang Anda berikan)
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytwYwvh_8hVTeatMCEM0YC600LvzhW5kLh8IbMwM8x5zNVrxHnHrfieQJaMMkeqFtg/exec";
-
-// 2. KEAMANAN & PENGGUNA
+// 1. KEAMANAN & INISIALISASI
 const currentUser = sessionStorage.getItem('userName') || "Administrator";
+const userRole = sessionStorage.getItem('role') || "staff";
 const isLoggedIn = sessionStorage.getItem('isLoggedIn');
 
 if (!isLoggedIn) {
     window.location.href = 'index.html';
 }
 
-let myChart = null;
-let globalData = []; // Penyimpan data untuk fitur Cari dan Excel
-
+// 2. JALANKAN SAAT HALAMAN SIAP
 document.addEventListener('DOMContentLoaded', () => {
     const displayUser = document.getElementById('displayUser');
     if (displayUser) displayUser.innerText = `Halo, ${currentUser}`;
-    
-    // Inisialisasi awal
+
+    const navMasalah = document.getElementById('navMasalah');
+    if (navMasalah && (userRole === 'admin' || userRole === 'manager')) {
+        navMasalah.classList.remove('d-none');
+    }
+
     loadData();
 });
 
-// 3. FUNGSI AMBIL DATA DARI CLOUD (SINKRON)
-function loadData() {
-    const tableBody = document.getElementById('tabelNota');
-    tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Menghubungkan ke Cloud...</td></tr>';
-    
-    fetch(SCRIPT_URL)
-        .then(res => {
-            if (!res.ok) throw new Error('Network Error');
-            return res.json();
-        })
-        .then(databaseNota => {
-            globalData = databaseNota; // Simpan ke global agar bisa di-export ke Excel
-            renderSemua(databaseNota);
-        })
-        .catch(err => {
-            console.error('Error Load:', err);
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Gagal memuat data dari Cloud. Pastikan internet aktif dan izin akses "Anyone" pada Apps Script sudah benar.</td></tr>';
-        });
-}
-
-// 4. FUNGSI SIMPAN DATA KE GOOGLE SHEETS
+// 3. LOGIKA SIMPAN DATA (PERBAIKAN ID BERURUTAN)
 const notaForm = document.getElementById('notaForm');
 if (notaForm) {
     notaForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        Swal.fire({
-            title: 'Menyimpan ke Cloud...',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
-        });
+        const databaseNota = JSON.parse(localStorage.getItem('daftarNota')) || [];
 
-        // Membuat ID berurutan (1, 2, 3...) agar rapi di Excel
-        const idBaru = globalData.length + 1;
+        // --- PERBAIKAN LOGIKA ID: BERURUTAN 1, 2, 3... ---
+        const idBaru = databaseNota.length > 0 ? databaseNota[databaseNota.length - 1].id + 1 : 1;
+
+        const tglNota = document.getElementById('tanggalNota').value;
+        const kode = document.getElementById('kodeJenis').value;
+        const ket = document.getElementById('kodeJenis').options[document.getElementById('kodeJenis').selectedIndex].text;
+        const shift = document.getElementById('shift').value;
+        const qty = parseInt(document.getElementById('jumlah').value);
+        const tglSistem = new Date().toISOString().split('T')[0];
 
         const notaBaru = {
-            id: idBaru,
-            tglNota: document.getElementById('tanggalNota').value,
-            tglInput: new Date().toISOString().split('T')[0],
-            kode: document.getElementById('kodeJenis').value,
-            keterangan: document.getElementById('kodeJenis').options[document.getElementById('kodeJenis').selectedIndex].text,
-            shift: document.getElementById('shift').value,
-            qty: parseInt(document.getElementById('jumlah').value),
+            id: idBaru, 
+            tglNota: tglNota,
+            tglInput: tglSistem,
+            kode: kode,
+            keterangan: ket,
+            shift: shift,
+            qty: qty,
             penginput: currentUser
         };
 
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', // Penting agar tidak kena blokir CORS
-            cache: 'no-cache',
-            body: JSON.stringify(notaBaru)
-        })
-        .then(() => {
-            Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Data tersimpan online', timer: 1500, showConfirmButton: false });
-            this.reset();
-            // Jeda 1 detik agar Google Sheets sempat memproses sebelum reload
-            setTimeout(loadData, 1000);
-        })
-        .catch(err => {
-            Swal.fire('Error!', 'Gagal terhubung ke Cloud', 'error');
-            console.error(err);
+        databaseNota.push(notaBaru);
+        localStorage.setItem('daftarNota', JSON.stringify(databaseNota));
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil Disimpan',
+            text: `Data ke-${idBaru} berhasil dicatat`,
+            timer: 1500,
+            showConfirmButton: false
         });
+
+        this.reset();
+        loadData();
     });
 }
 
-// 5. RENDER TABEL & STATISTIK
-function renderSemua(data) {
+// 4. RENDER TABEL & STATISTIK
+let myChart = null; 
+
+function loadData() {
     const tableBody = document.getElementById('tabelNota');
+    let db = JSON.parse(localStorage.getItem('daftarNota')) || [];
+    
     tableBody.innerHTML = '';
     
-    let stats = { totalQty: 0, pagi: 0, malam: 0, bulanIni: 0, bulanLalu: 0 };
+    let totalQty = 0;
+    let pagiCount = 0;
+    let malamCount = 0;
+    let qtyBulanIni = 0;
+    let qtyBulanLalu = 0;
     let chartLabels = {};
+
     const now = new Date();
     const currMonth = now.getMonth();
     const currYear = now.getFullYear();
 
-    // Urutkan data terbaru di atas untuk tabel
-    const dataSorted = data.slice().reverse();
+    const cari = document.getElementById('cariData').value.toLowerCase();
+    const dataFiltered = db.filter(item => {
+        return item.kode.toLowerCase().includes(cari) || 
+               item.keterangan.toLowerCase().includes(cari);
+    });
 
-    dataSorted.forEach((nota) => {
-        // Hitung Statistik Dasar
-        stats.totalQty += parseInt(nota.qty);
-        if(nota.shift === 'PAGI') stats.pagi++;
-        if(nota.shift === 'MALAM') stats.malam++;
+    dataFiltered.slice().reverse().forEach((nota, index) => {
+        totalQty += nota.qty;
+        if(nota.shift === 'PAGI') pagiCount++;
+        if(nota.shift === 'MALAM') malamCount++;
         
-        // Statistik Performa Bulan Ini
         const dNota = new Date(nota.tglNota);
         if (dNota.getMonth() === currMonth && dNota.getFullYear() === currYear) {
-            stats.bulanIni += parseInt(nota.qty);
+            qtyBulanIni += nota.qty;
         } else if (dNota.getMonth() === (currMonth === 0 ? 11 : currMonth - 1)) {
-            stats.bulanLalu += parseInt(nota.qty);
+            qtyBulanLalu += nota.qty;
         }
 
-        // Data untuk Grafik
-        chartLabels[nota.kode] = (chartLabels[nota.kode] || 0) + parseInt(nota.qty);
+        chartLabels[nota.kode] = (chartLabels[nota.kode] || 0) + nota.qty;
 
-        // Render Baris ke HTML
         const row = `
             <tr>
-                <td class="fw-bold">#${nota.id}</td>
+                <td class="text-muted fw-bold">#${nota.id}</td>
                 <td>
-                    <div class="fw-bold">${formatIndo(nota.tglNota)}</div>
-                    <div class="text-muted small" style="font-size: 10px;">Input: ${formatIndo(nota.tglInput)}</div>
+                    <span class="tgl-nota-badge">${formatIndo(nota.tglNota)}</span>
+                    <span class="tgl-input-badge">Input: ${formatIndo(nota.tglInput)}</span>
                 </td>
-                <td><span class="badge bg-primary px-2">${nota.kode}</span></td>
+                <td><span class="badge-jenis">${nota.kode}</span></td>
                 <td class="text-start">${nota.keterangan}</td>
                 <td class="fw-bold">${nota.qty}</td>
-                <td><small class="text-muted">${nota.penginput}</small></td>
+                <td>
+                    <button class="btn btn-sm btn-link text-danger p-0" onclick="hapusNota(${nota.id})">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
             </tr>
         `;
         tableBody.insertAdjacentHTML('beforeend', row);
     });
 
-    // UPDATE UI DASHBOARD
-    document.getElementById('statTotal').innerText = data.length;
-    document.getElementById('statPagi').innerText = stats.pagi;
-    document.getElementById('statMalam').innerText = stats.malam;
-    document.getElementById('statTotalQty').innerText = stats.totalQty;
-    document.getElementById('statBulanIni').innerText = `${stats.bulanIni} UNIT`;
+    // UPDATE UI
+    document.getElementById('statTotal').innerText = dataFiltered.length;
+    document.getElementById('statPagi').innerText = pagiCount;
+    document.getElementById('statMalam').innerText = malamCount;
+    document.getElementById('statTotalQty').innerText = totalQty;
+    document.getElementById('statBulanIni').innerText = `${qtyBulanIni} UNIT`;
 
-    updateSummaryCard(stats.bulanIni, stats.bulanLalu);
-    updateChart(chartLabels);
-}
-
-// 6. FUNGSI EXCEL (Mencegah ID Ilmiah)
-function exportToExcel() {
-    if (globalData.length === 0) {
-        return Swal.fire('Data Kosong', 'Tidak ada data untuk di-download', 'warning');
-    }
-    
-    // Gunakan globalData agar ID tetap urutan 1, 2, 3...
-    const ws = XLSX.utils.json_to_sheet(globalData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Data_Nota_AliAkatiri");
-    
-    XLSX.writeFile(wb, `Laporan_AliAkatiri_${new Date().toLocaleDateString('id-ID')}.xlsx`);
-}
-
-// 7. HELPER FUNCTIONS
-function formatIndo(dateStr) {
-    if(!dateStr) return "-";
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-}
-
-function updateSummaryCard(ini, lalu) {
+    // UPDATE SUMMARY CARD
     const bandingElemen = document.getElementById('perbandinganBulan');
-    if (!bandingElemen) return;
-    
-    if (lalu === 0) {
-        bandingElemen.innerHTML = `<i class="fas fa-info-circle"></i> Memulai data bulan baru`;
+    if (qtyBulanLalu === 0) {
+        bandingElemen.innerHTML = `<i class="fas fa-info"></i> Data bulan lalu belum tersedia.`;
     } else {
-        const selisih = ini - lalu;
-        const persen = ((selisih / lalu) * 100).toFixed(1);
+        const selisih = qtyBulanIni - qtyBulanLalu;
+        const persen = ((selisih / qtyBulanLalu) * 100).toFixed(1);
         bandingElemen.innerHTML = selisih >= 0 ? 
             `<i class="fas fa-arrow-up"></i> Naik <strong>${persen}%</strong> dari bulan lalu` : 
             `<i class="fas fa-arrow-down"></i> Turun <strong>${Math.abs(persen)}%</strong> dari bulan lalu`;
+        if (selisih >= 0) bandingElemen.classList.add('text-warning');
     }
+
+    updateChart(chartLabels);
 }
 
+// 5. FUNGSI GRAFIK
 function updateChart(chartLabels) {
-    const ctx = document.getElementById('chartPerbaikan');
-    if (!ctx) return;
-    
+    const ctx = document.getElementById('chartPerbaikan').getContext('2d');
     if (myChart) myChart.destroy();
-    myChart = new Chart(ctx.getContext('2d'), {
+    myChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: Object.keys(chartLabels),
@@ -201,6 +168,50 @@ function updateChart(chartLabels) {
             }]
         },
         options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+    });
+}
+
+// 6. FUNGSI EKSPOR EXCEL (ID AKAN RAPI)
+function exportToExcel() {
+    let database = JSON.parse(localStorage.getItem('daftarNota')) || [];
+    if (database.length === 0) return Swal.fire('Kosong', 'Tidak ada data.', 'info');
+    
+    // Pastikan ID dikirim sebagai angka biasa agar tidak berantakan
+    const dataUntukExcel = database.map(item => ({
+        "No ID": item.id,
+        "Tgl Nota": item.tglNota,
+        "Tgl Input": item.tglInput,
+        "Kode": item.kode,
+        "Keterangan": item.keterangan,
+        "Shift": item.shift,
+        "Qty": item.qty,
+        "Penginput": item.penginput
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataUntukExcel);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan_AliAkatiri");
+    XLSX.writeFile(wb, `Laporan_AliAkatiri_${new Date().toLocaleDateString()}.xlsx`);
+}
+
+function formatIndo(dateStr) {
+    if(!dateStr) return "-";
+    return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+}
+
+function hapusNota(id) {
+    Swal.fire({
+        title: 'Hapus data?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let db = JSON.parse(localStorage.getItem('daftarNota'));
+            db = db.filter(item => item.id !== id);
+            localStorage.setItem('daftarNota', JSON.stringify(db));
+            loadData();
+        }
     });
 }
 
