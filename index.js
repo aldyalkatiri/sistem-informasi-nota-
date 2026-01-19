@@ -1,122 +1,141 @@
 /**
- * ALI AKATIRI SYSTEM - LOGIC CORE
- * Version: 2.0 (Final Sync)
+ * ALI AKATIRI SYSTEM - CORE LOGIC
+ * Version: 2.1 Final (Feature 6 & Dual Date Sync)
  */
 
-// 1. KEAMANAN & CEK LOGIN
-const currentUser = sessionStorage.getItem('userName') || "Admin";
+// 1. KEAMANAN & INISIALISASI PENGGUNA
+const currentUser = sessionStorage.getItem('userName') || "Administrator";
 const userRole = sessionStorage.getItem('role') || "staff";
 const isLoggedIn = sessionStorage.getItem('isLoggedIn');
 
 if (!isLoggedIn) {
-    window.location.href = 'index.html'; // Tendang ke login jika belum masuk
+    window.location.href = 'index.html';
 }
 
-// 2. INITIAL LOAD (Jalan Saat Halaman Dibuka)
+// 2. JALANKAN SAAT HALAMAN SIAP
 document.addEventListener('DOMContentLoaded', () => {
-    // Tampilkan Nama di Navbar
+    // Tampilkan Nama User di Navbar
     const displayUser = document.getElementById('displayUser');
     if (displayUser) displayUser.innerText = `Halo, ${currentUser}`;
 
-    // Tampilkan Tombol Masalah Hanya Untuk Admin
+    // Tampilkan Tombol Admin (Nota Bermasalah) jika Role sesuai
     const navMasalah = document.getElementById('navMasalah');
     if (navMasalah && (userRole === 'admin' || userRole === 'manager')) {
         navMasalah.classList.remove('d-none');
     }
 
-    loadData(); // Jalankan render tabel & statistik
+    loadData(); // Memuat tabel, statistik, dan grafik
 });
 
-// 3. FUNGSI SIMPAN DATA (SUBMIT FORM)
+// 3. LOGIKA SIMPAN DATA (FORM SUBMIT)
 const notaForm = document.getElementById('notaForm');
 if (notaForm) {
     notaForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Ambil Data dari Form
+        // Ambil Nilai Form
         const tglNota = document.getElementById('tanggalNota').value;
         const kode = document.getElementById('kodeJenis').value;
         const ket = document.getElementById('kodeJenis').options[document.getElementById('kodeJenis').selectedIndex].text;
         const shift = document.getElementById('shift').value;
         const qty = parseInt(document.getElementById('jumlah').value);
         
-        // TANGGAL INPUT OTOMATIS (Sistem Hari Ini)
-        const tglInputSistem = new Date().toISOString().split('T')[0];
+        // TANGGAL INPUT OTOMATIS (SISTEM HARI INI)
+        const tglSistem = new Date().toISOString().split('T')[0];
 
-        // Buat Object Nota
-        const dataNotaBaru = {
+        // Buat Object Data
+        const notaBaru = {
             id: Date.now(),
-            tglNota: tglNota,        // Tanggal fisik nota
-            tglInput: tglInputSistem, // Tanggal entry
+            tglNota: tglNota,      // Tanggal fisik nota
+            tglInput: tglSistem,   // Tanggal entry data
             kode: kode,
             keterangan: ket,
             shift: shift,
             qty: qty,
-            operator: currentUser
+            penginput: currentUser
         };
 
         // Simpan ke LocalStorage
-        let db = JSON.parse(localStorage.getItem('daftarNota')) || [];
-        db.push(dataNotaBaru);
-        localStorage.setItem('daftarNota', JSON.stringify(db));
+        let databaseNota = JSON.parse(localStorage.getItem('daftarNota')) || [];
+        databaseNota.push(notaBaru);
+        localStorage.setItem('daftarNota', JSON.stringify(databaseNota));
 
-        // Notifikasi Sukses
+        // Feedback Berhasil
         Swal.fire({
             icon: 'success',
-            title: 'Berhasil!',
-            text: 'Data nota telah tersimpan.',
+            title: 'Berhasil Disimpan',
+            text: `Nota ${kode} berhasil dicatat`,
             timer: 1500,
             showConfirmButton: false
         });
 
-        this.reset(); // Kosongkan form
-        loadData();  // Refresh tampilan
+        this.reset();
+        loadData(); // Refresh tampilan
     });
 }
 
-// 4. RENDER TABEL, STATISTIK, & CHART
-let chartInstance = null; // Penampung grafik agar tidak tumpang tindih
+// 4. RENDER TABEL & STATISTIK (CORE FUNCTION)
+let myChart = null; 
 
 function loadData() {
     const tableBody = document.getElementById('tabelNota');
-    const db = JSON.parse(localStorage.getItem('daftarNota')) || [];
+    let databaseNota = JSON.parse(localStorage.getItem('daftarNota')) || [];
     
-    // Reset Tampilan
+    // Reset Tabel
     tableBody.innerHTML = '';
     
-    // Variabel Counter Statistik
+    // Variabel Penampung Statistik
     let totalQty = 0;
     let pagiCount = 0;
     let malamCount = 0;
-    let dataGrafik = {}; // Untuk Chart
+    let qtyBulanIni = 0;
+    let qtyBulanLalu = 0;
+    let chartLabels = {};
 
-    // Ambil keyword cari
+    // Tanggal Hari Ini untuk Perbandingan Bulanan
+    const now = new Date();
+    const currMonth = now.getMonth();
+    const currYear = now.getFullYear();
+
+    // Filter Pencarian
     const cari = document.getElementById('cariData').value.toLowerCase();
+    const dataFiltered = databaseNota.filter(item => {
+        return item.kode.toLowerCase().includes(cari) || 
+               item.keterangan.toLowerCase().includes(cari);
+    });
 
-    // Filter & Render (Data terbaru di atas)
-    const filteredData = db.filter(item => 
-        item.kode.toLowerCase().includes(cari) || 
-        item.keterangan.toLowerCase().includes(cari)
-    );
-
-    filteredData.slice().reverse().forEach((nota, index) => {
-        // Hitung Statistik
+    // Proses Data (Render & Hitung)
+    dataFiltered.slice().reverse().forEach((nota, index) => {
+        // A. Hitung Statistik Umum
         totalQty += nota.qty;
         if(nota.shift === 'PAGI') pagiCount++;
         if(nota.shift === 'MALAM') malamCount++;
         
-        // Kelompokkan data untuk Chart (berdasarkan Kode SL, SD, dll)
-        dataGrafik[nota.kode] = (dataGrafik[nota.kode] || 0) + nota.qty;
+        // B. Hitung Perbandingan Bulanan (Feature 6)
+        const dNota = new Date(nota.tglNota);
+        const mNota = dNota.getMonth();
+        const yNota = dNota.getFullYear();
 
-        // Render Baris
+        if (mNota === currMonth && yNota === currYear) {
+            qtyBulanIni += nota.qty;
+        } else if (mNota === (currMonth === 0 ? 11 : currMonth - 1) && 
+                   yNota === (currMonth === 0 ? currYear - 1 : currYear)) {
+            qtyBulanLalu += nota.qty;
+        }
+
+        // C. Siapkan Data Grafik
+        chartLabels[nota.kode] = (chartLabels[nota.kode] || 0) + nota.qty;
+
+        // D. Render Baris Tabel
         const row = `
             <tr>
-                <td>${index + 1}</td>
-                <td><span class="tgl-nota-badge">${formatTgl(nota.tglNota)}</span></td>
-                <td><span class="tgl-input-badge">Input: ${formatTgl(nota.tglInput)}</span></td>
+                <td class="text-muted small">${index + 1}</td>
+                <td>
+                    <span class="tgl-nota-badge">${formatIndo(nota.tglNota)}</span>
+                    <span class="tgl-input-badge">Input: ${formatIndo(nota.tglInput)}</span>
+                </td>
                 <td><span class="badge-jenis">${nota.kode}</span></td>
                 <td class="text-start">${nota.keterangan}</td>
-                <td><span class="badge ${nota.shift === 'PAGI' ? 'bg-warning text-dark' : 'bg-info'}">${nota.shift}</span></td>
                 <td class="fw-bold">${nota.qty}</td>
                 <td>
                     <button class="btn btn-sm btn-link text-danger p-0" onclick="hapusNota(${nota.id})">
@@ -128,64 +147,78 @@ function loadData() {
         tableBody.insertAdjacentHTML('beforeend', row);
     });
 
-    // Update Angka Statistik di Kotak Atas
-    document.getElementById('statTotal').innerText = filteredData.length;
+    // 5. UPDATE UI STATISTIK
+    document.getElementById('statTotal').innerText = dataFiltered.length;
     document.getElementById('statPagi').innerText = pagiCount;
     document.getElementById('statMalam').innerText = malamCount;
     document.getElementById('statTotalQty').innerText = totalQty;
+    document.getElementById('statBulanIni').innerText = `${qtyBulanIni} UNIT`;
 
-    // Gambar Ulang Grafik
-    updateMyChart(dataGrafik);
-}
-
-// 5. FUNGSI GRAFIK (CHART.JS)
-function updateMyChart(dataGrafik) {
-    const ctx = document.getElementById('chartPerbaikan').getContext('2d');
-    
-    if (chartInstance) {
-        chartInstance.destroy(); // Hapus chart lama
+    // 6. UPDATE SUMMARY CARD (FEATURE 6)
+    const bandingElemen = document.getElementById('perbandinganBulan');
+    if (qtyBulanLalu === 0) {
+        bandingElemen.innerHTML = `<i class="fas fa-info-circle me-1"></i> Data bulan lalu belum tersedia.`;
+    } else {
+        const selisih = qtyBulanIni - qtyBulanLalu;
+        const persen = ((selisih / qtyBulanLalu) * 100).toFixed(1);
+        if (selisih >= 0) {
+            bandingElemen.innerHTML = `<i class="fas fa-arrow-up me-1"></i> Naik <strong>${persen}%</strong> dari bulan lalu`;
+            bandingElemen.classList.add('text-warning'); 
+        } else {
+            bandingElemen.innerHTML = `<i class="fas fa-arrow-down me-1"></i> Turun <strong>${Math.abs(persen)}%</strong> dari bulan lalu`;
+            bandingElemen.classList.remove('text-warning');
+        }
     }
 
-    chartInstance = new Chart(ctx, {
-        type: 'bar',
+    updateChart(chartLabels);
+}
+
+// 7. FUNGSI GRAFIK (CHART.JS)
+function updateChart(chartLabels) {
+    const ctx = document.getElementById('chartPerbaikan').getContext('2d');
+    if (myChart) myChart.destroy();
+
+    myChart = new Chart(ctx, {
+        type: 'doughnut', // Menggunakan Doughnut untuk proporsi di panel samping
         data: {
-            labels: Object.keys(dataGrafik),
+            labels: Object.keys(chartLabels),
             datasets: [{
-                label: 'Total Qty Perbaikan',
-                data: Object.values(dataGrafik),
-                backgroundColor: '#0369a1',
-                borderRadius: 8
+                data: Object.values(chartLabels),
+                backgroundColor: ['#0369a1', '#0ea5e9', '#38bdf8', '#7dd3fc', '#bae6fd', '#0c4a6e', '#075985'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } }
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+            },
+            cutout: '70%'
         }
     });
 }
 
-// 6. EKSPOR KE EXCEL
+// 8. FUNGSI EKSPOR & HELPER
 function exportToExcel() {
-    const db = JSON.parse(localStorage.getItem('daftarNota')) || [];
-    if (db.length === 0) return Swal.fire('Data Kosong', '', 'info');
-
-    const ws = XLSX.utils.json_to_sheet(db);
+    let database = JSON.parse(localStorage.getItem('daftarNota')) || [];
+    if (database.length === 0) return Swal.fire('Kosong', 'Tidak ada data.', 'info');
+    const ws = XLSX.utils.json_to_sheet(database);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Laporan_Nota");
-    XLSX.writeFile(wb, `Laporan_AliAkatiri_${new Date().getTime()}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, "AliAkatiri_Log");
+    XLSX.writeFile(wb, `Laporan_AA_${new Date().getTime()}.xlsx`);
 }
 
-// 7. FUNGSI HELPER
-function formatTgl(tgl) {
-    if(!tgl) return "-";
-    const d = new Date(tgl);
-    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+function formatIndo(dateStr) {
+    if(!dateStr) return "-";
+    const event = new Date(dateStr);
+    return event.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
 
 function hapusNota(id) {
     Swal.fire({
-        title: 'Hapus Nota?',
+        title: 'Hapus data?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
