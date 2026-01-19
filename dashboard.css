@@ -1,174 +1,193 @@
-/* ALI AKATIRI SYSTEM - ENTERPRISE STYLING 
-    Version: 2.1 Final (Synchronized)
+/* ALI AKATIRI SYSTEM - FINAL STYLING 
+   Optimized for Desktop & Mobile (Responsive Design)
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
 :root {
-    --primary: #0369a1;         /* Ocean Blue */
-    --primary-dark: #0c4a6e;    /* Deep Blue */
-    --primary-light: #e0f2fe;   /* Sky Blue Light */
-    --accent: #f59e0b;          /* Amber Warning */
-    --success: #10b981;         /* Emerald Green */
-    --danger: #ef4444;          /* Rose Red */
-    --bg-body: #f8fafc;         /* White Slate */
+    --primary: #0369a1;
+    --secondary: #0ea5e9;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --bg-body: #f1f5f9;
+    --white: #ffffff;
     --text-main: #1e293b;
-    --text-muted: #64748b;
-    --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-/* --- DASAR HALAMAN --- */
-body.enterprise-bg {
+/* --- DASAR --- */
+body {
     background-color: var(--bg-body);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: var(--text-main);
-    letter-spacing: -0.2px;
+    line-height: 1.5;
 }
 
 /* --- NAVIGASI --- */
 .navbar {
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%) !important;
-    padding: 15px 0;
-    border-bottom: 4px solid var(--accent);
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+    padding: 1rem 0;
+    box-shadow: var(--shadow);
 }
 
 .navbar-brand {
-    font-weight: 800 !important;
-    font-size: 1.3rem;
-    letter-spacing: 0.5px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
-/* --- SUMMARY CARD (FITUR 6) --- */
-.bg-primary {
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+/* --- HEADER PERFORMA (BLUE CARD) --- */
+.header-performa {
+    background: linear-gradient(135deg, var(--primary) 0%, #075985 100%);
+    border-radius: 24px;
+    padding: 2.5rem;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(3, 105, 161, 0.3);
 }
 
-.fw-800 { font-weight: 800; }
-
-#perbandinganBulan {
-    padding: 4px 12px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 50px;
-    display: inline-block;
-    font-size: 0.85rem;
+.header-performa .display-4 {
+    font-weight: 800;
+    margin-bottom: 0.5rem;
 }
 
-#perbandinganBulan.text-warning {
-    color: #fef08a !important; /* Kuning terang agar terbaca di biru */
-}
-
-/* --- KARTU STATISTIK KECIL --- */
+/* --- KARTU STATISTIK (DESKTOP) --- */
 .stat-card {
-    border-radius: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--white);
+    border: none;
+    border-radius: 16px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    height: 100%;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-card);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+.stat-card h6 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
 }
 
 .stat-card h3 {
-    font-size: 1.6rem;
-    letter-spacing: -1px;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text-main);
 }
 
+/* Variasi Warna Border Samping */
+.border-pagi { border-left: 4px solid var(--accent); }
+.border-malam { border-left: 4px solid #3b82f6; }
+.border-total { border-left: 4px solid var(--success); }
+
 /* --- FORM & INPUT --- */
-.card {
-    border-radius: 18px;
+.card-input {
+    background: var(--white);
+    border-radius: 20px;
     border: none;
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow);
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
 }
 
 .form-control, .form-select {
-    border: 2px solid #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem;
     border-radius: 12px;
-    padding: 10px 15px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    transition: all 0.2s;
 }
 
-.form-control:focus, .form-select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(3, 105, 161, 0.1);
+.form-control:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
 }
 
-/* --- TABEL RIWAYAT --- */
+/* --- TABEL DATA --- */
+.table-container {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+}
+
 .table thead th {
     background-color: #f8fafc;
-    color: var(--text-muted);
+    border: none;
+    color: #64748b;
+    font-size: 0.75rem;
     font-weight: 700;
-    font-size: 0.65rem;
-    letter-spacing: 1px;
-    padding: 15px;
-    border-bottom: 2px solid #f1f5f9;
+    text-transform: uppercase;
+    padding: 1rem;
 }
 
 .table tbody td {
-    padding: 15px;
-    font-size: 0.85rem;
-    border-bottom: 1px solid #f8fafc;
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-/* Badge untuk Jenis Perbaikan di Tabel */
 .badge-jenis {
-    background-color: var(--primary-light);
+    background: #e0f2fe;
     color: var(--primary);
-    font-weight: 700;
-    padding: 5px 10px;
+    padding: 0.35rem 0.75rem;
     border-radius: 8px;
+    font-weight: 700;
     font-size: 0.75rem;
 }
 
-/* Penataan Tanggal di Tabel */
-.tgl-nota-badge {
-    font-weight: 800;
-    color: var(--primary);
-    display: block;
-}
-
-.tgl-input-badge {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    font-style: italic;
-    display: block;
-}
-
-/* --- TOMBOL --- */
-.btn-primary {
-    background-color: var(--primary);
-    border: none;
-    border-radius: 12px;
-    transition: all 0.3s;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-    transform: scale(1.02);
-}
-
-.btn-success {
-    background-color: var(--success);
-    border: none;
-    border-radius: 10px;
-}
-
-/* --- RESPONSIVE --- */
-@media (max-width: 992px) {
-    .h-100 { height: auto !important; }
-}
-
+/* --- RESPONSIVE MOBILE (OPTIMASI HP) --- */
 @media (max-width: 768px) {
-    .navbar-brand { font-size: 1.1rem; }
-    #statBulanIni { font-size: 2rem; }
-}
+    /* Header lebih kecil di HP */
+    .header-performa {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
 
-/* Animasi Entry Data Baru */
-@keyframes highlight {
-    0% { background-color: #fef08a; }
-    100% { background-color: transparent; }
-}
+    .header-performa .display-4 {
+        font-size: 2.25rem !important;
+    }
 
-.row-new {
-    animation: highlight 2s ease-out;
+    /* GRID 2 KOLOM UNTUK HP (PENTING!) */
+    .row-stats {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr; /* Membagi layar jadi 2 kotak */
+        gap: 12px !important;
+    }
+
+    .row-stats > div {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-card h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Tabel: Sembunyikan kolom yang kurang penting di layar kecil */
+    .table th:nth-child(1), .table td:nth-child(1), /* Sembunyikan NO */
+    .table th:nth-child(6), .table td:nth-child(6)  /* Sembunyikan Penginput */ {
+        display: none;
+    }
+
+    .table td {
+        font-size: 0.8rem;
+        padding: 0.75rem 0.5rem !important;
+    }
+
+    /* Badge Tanggal Berbaris Vertikal di HP */
+    .tgl-nota-badge { font-weight: 700; display: block; }
+    .tgl-input-badge { font-size: 9px; display: block; color: #94a3b8; }
 }
