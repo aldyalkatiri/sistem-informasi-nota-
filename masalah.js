@@ -1,113 +1,127 @@
 /**
  * ali-akatiri-system: masalah.js
- * Logika Manajemen Nota Bermasalah
+ * Logika sinkronisasi data nota bermasalah dengan sistem dua tanggal
  */
 
-// 1. Inisialisasi Data & User Aktif
-// Mengambil nama dari sessionStorage hasil login untuk mencegah "null"
+// 1. PROTEKSI HALAMAN & AMBIL DATA USER
 const userAktif = sessionStorage.getItem('userName') || "Administrator";
+const isLoggedIn = sessionStorage.getItem('isLoggedIn');
 
-// 2. Fungsi Utama: Menampilkan Data dari LocalStorage ke Tabel
+if (!isLoggedIn) {
+    window.location.href = 'index.html';
+}
+
+// 2. FUNGSI UTAMA: MENAMPILKAN DATA
 function tampilkanData() {
-    const tabelBody = document.getElementById('bodyTabelMasalah');
-    const counterDisplay = document.getElementById('countMasalah');
+    const tableBody = document.getElementById('bodyTabelMasalah');
+    const countDisplay = document.getElementById('countMasalah');
     
-    // Ambil data dari penyimpanan lokal
+    // Ambil database masalah dari localStorage
     const dataMasalah = JSON.parse(localStorage.getItem('dataMasalah')) || [];
     
-    // Update Counter (Jumlah Laporan)
-    if (counterDisplay) {
-        counterDisplay.innerText = dataMasalah.length;
+    // Update Counter Total Masalah
+    if (countDisplay) {
+        countDisplay.innerText = dataMasalah.length;
     }
 
-    // Reset isi tabel agar tidak duplikat saat render ulang
-    tabelBody.innerHTML = '';
+    // Reset Tabel
+    tableBody.innerHTML = '';
 
-    // Jika data kosong, tampilkan pesan informatif
     if (dataMasalah.length === 0) {
-        tabelBody.innerHTML = `
+        tableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center py-5">
-                    <div class="text-muted">
-                        <i class="fas fa-folder-open fa-3x mb-3 d-block opacity-20"></i>
-                        Belum ada laporan nota bermasalah.
+                <td colspan="7" class="text-center py-5">
+                    <div class="text-muted small">
+                        <i class="fas fa-check-circle fa-3x mb-3 d-block opacity-20 text-success"></i>
+                        Tidak ada laporan nota bermasalah saat ini.
                     </div>
                 </td>
             </tr>`;
         return;
     }
 
-    // Render baris tabel secara dinamis
-    dataMasalah.forEach((item, index) => {
+    // Render Data (Urutan: Terbaru di atas)
+    // Kita gunakan slice().reverse() agar tidak merusak urutan asli di localStorage
+    dataMasalah.slice().reverse().forEach((item, index) => {
         const row = `
             <tr class="animate-fade">
-                <td class="ps-3 fw-bold text-secondary">${index + 1}</td>
-                <td class="fw-semibold">${formatTanggal(item.tanggal)}</td>
-                <td class="small text-wrap" style="max-width: 300px;">${item.deskripsi}</td>
-                <td><span class="badge-user"><i class="fas fa-user-edit me-1"></i> ${item.pelapor}</span></td>
+                <td class="small text-muted">${index + 1}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="lihatFoto('${item.foto}')">
-                        <i class="fas fa-image me-1"></i> Lihat
+                    <span class="tgl-nota-badge">${formatTglIndo(item.tglNota)}</span>
+                </td>
+                <td>
+                    <span class="tgl-input-badge">Input: ${formatTglIndo(item.tglInput)}</span>
+                </td>
+                <td class="text-start small" style="max-width: 350px; line-height: 1.4;">
+                    ${item.deskripsi}
+                </td>
+                <td>
+                    <span class="badge bg-light text-primary border px-2 py-1">
+                        <i class="fas fa-user-edit me-1" style="font-size: 0.7rem;"></i> ${item.pelapor}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-info rounded-pill px-3" onclick="lihatFoto()">
+                        <i class="fas fa-image"></i>
                     </button>
                 </td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-outline-danger border-0 rounded-circle" onclick="hapusData(${index})">
+                <td>
+                    <button class="btn btn-sm btn-link text-danger p-0" onclick="hapusMasalah(${item.id})">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </td>
             </tr>
         `;
-        tabelBody.insertAdjacentHTML('beforeend', row);
+        tableBody.insertAdjacentHTML('beforeend', row);
     });
 }
 
-// 3. Logika Menangani Input Form (Simpan Data)
+// 3. LOGIKA SIMPAN TEMUAN BARU
 const formMasalah = document.getElementById('formMasalah');
 if (formMasalah) {
     formMasalah.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        const inputTgl = document.getElementById('tglMasalah').value;
-        const inputDesc = document.getElementById('descMasalah').value;
 
-        // Ambil array lama, gabungkan dengan data baru
-        const databaseLama = JSON.parse(localStorage.getItem('dataMasalah')) || [];
+        const tglNota = document.getElementById('tglNotaBermasalah').value;
+        const deskripsi = document.getElementById('descMasalah').value;
         
-        const laporanBaru = {
-            tanggal: inputTgl,
-            deskripsi: inputDesc,
-            pelapor: userAktif, // Nama pelapor otomatis dari akun login
-            foto: "placeholder-nota.jpg",
-            timestamp: new Date().toISOString()
+        // TANGGAL INPUT OTOMATIS (SISTEM)
+        const tglSistem = new Date().toISOString().split('T')[0];
+
+        // Object Data Masalah
+        const dataBaru = {
+            id: Date.now(), // Unique ID untuk hapus data
+            tglNota: tglNota,
+            tglInput: tglSistem,
+            deskripsi: deskripsi,
+            pelapor: userAktif
         };
 
-        databaseLama.push(laporanBaru);
-        
-        // Simpan kembali ke LocalStorage
-        localStorage.setItem('dataMasalah', JSON.stringify(databaseLama));
+        // Simpan ke Database Lokal
+        let database = JSON.parse(localStorage.getItem('dataMasalah')) || [];
+        database.push(dataBaru);
+        localStorage.setItem('dataMasalah', JSON.stringify(database));
 
-        // Berikan Feedback ke User
+        // Sweet Alert Feedback
         Swal.fire({
             icon: 'success',
             title: 'Berhasil Disimpan',
-            text: 'Laporan temuan nota telah masuk ke database.',
-            timer: 2000,
+            text: 'Temuan masalah telah masuk ke database audit.',
+            timer: 1500,
             showConfirmButton: false,
-            background: '#ffffff',
-            iconColor: '#0369a1'
+            background: '#ffffff'
         });
 
-        // Reset Form & Update Tabel secara Real-time
         this.reset();
         tampilkanData();
     });
 }
 
-// 4. Fungsi Hapus Laporan
-function hapusData(index) {
+// 4. FUNGSI HAPUS DATA
+function hapusMasalah(id) {
     Swal.fire({
         title: 'Hapus Laporan?',
-        text: "Data yang dihapus tidak dapat dipulihkan kembali!",
+        text: "Pastikan masalah ini sudah selesai ditangani.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
@@ -116,17 +130,15 @@ function hapusData(index) {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            let currentData = JSON.parse(localStorage.getItem('dataMasalah'));
-            currentData.splice(index, 1); // Hapus 1 item sesuai index
+            let db = JSON.parse(localStorage.getItem('dataMasalah'));
+            // Filter semua kecuali ID yang dipilih
+            db = db.filter(item => item.id !== id);
+            localStorage.setItem('dataMasalah', JSON.stringify(db));
             
-            localStorage.setItem('dataMasalah', JSON.stringify(currentData));
-            
-            // Refresh tabel
             tampilkanData();
             
             Swal.fire({
-                title: 'Dihapus!',
-                text: 'Laporan telah dihapus dari riwayat.',
+                title: 'Dihapus',
                 icon: 'success',
                 timer: 1000,
                 showConfirmButton: false
@@ -135,28 +147,27 @@ function hapusData(index) {
     });
 }
 
-// 5. Fungsi Lihat Foto (Preview Modal)
-function lihatFoto(url) {
+// 5. FUNGSI PEMBANTU (HELPERS)
+function formatTglIndo(str) {
+    if(!str) return "-";
+    const d = new Date(str);
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function lihatFoto() {
     Swal.fire({
-        title: 'Bukti Temuan Nota',
-        imageUrl: 'https://via.placeholder.com/600x400/e0f2fe/0369a1?text=Preview+Dokumen+Nota',
-        imageAlt: 'Foto Bukti Nota Bermasalah',
-        confirmButtonText: 'Tutup Dashboard',
+        title: 'Preview Bukti',
+        text: 'Fitur upload file memerlukan server. Saat ini menampilkan placeholder.',
+        imageUrl: 'https://via.placeholder.com/500x350/f1f5f9/0369a1?text=Bukti+Fisik+Nota',
+        imageAlt: 'Bukti Masalah',
         confirmButtonColor: '#0369a1'
     });
 }
 
-// 6. Fungsi Helper: Format Tanggal agar lebih cantik
-function formatTanggal(dateString) {
-    const opsi = { day: 'numeric', month: 'long', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('id-ID', opsi);
-}
-
-// 7. Fungsi Logout
 function logout() {
     sessionStorage.clear();
     window.location.href = 'index.html';
 }
 
-// Jalankan fungsi tampilkan data saat seluruh elemen HTML selesai dimuat
+// Jalankan fungsi saat halaman dimuat sempurna
 document.addEventListener('DOMContentLoaded', tampilkanData);
