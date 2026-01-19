@@ -1,5 +1,5 @@
-/* ALI AKATIRI SYSTEM - ENTERPRISE STYLING
-    Sync Version: 2.0 (Final)
+/* ALI AKATIRI SYSTEM - ENTERPRISE STYLING 
+    Version: 2.1 Final (Synchronized)
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -7,74 +7,85 @@
 :root {
     --primary: #0369a1;         /* Ocean Blue */
     --primary-dark: #0c4a6e;    /* Deep Blue */
-    --secondary: #64748b;       /* Slate Grey */
+    --primary-light: #e0f2fe;   /* Sky Blue Light */
     --accent: #f59e0b;          /* Amber Warning */
     --success: #10b981;         /* Emerald Green */
     --danger: #ef4444;          /* Rose Red */
-    --bg-body: #f1f5f9;         /* Light Blueish Grey */
-    --white: #ffffff;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
-    --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
+    --bg-body: #f8fafc;         /* White Slate */
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* --- DASAR HALAMAN --- */
 body.enterprise-bg {
     background-color: var(--bg-body);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #334155;
-    margin: 0;
-    padding: 0;
+    color: var(--text-main);
+    letter-spacing: -0.2px;
 }
 
 /* --- NAVIGASI --- */
 .navbar {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%) !important;
-    padding: 12px 0;
-    border-bottom: 3px solid var(--accent);
+    padding: 15px 0;
+    border-bottom: 4px solid var(--accent);
 }
 
 .navbar-brand {
-    font-size: 1.4rem;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    font-weight: 800 !important;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
 }
 
-/* --- KARTU STATISTIK --- */
+/* --- SUMMARY CARD (FITUR 6) --- */
+.bg-primary {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+}
+
+.fw-800 { font-weight: 800; }
+
+#perbandinganBulan {
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+#perbandinganBulan.text-warning {
+    color: #fef08a !important; /* Kuning terang agar terbaca di biru */
+}
+
+/* --- KARTU STATISTIK KECIL --- */
 .stat-card {
-    border: none;
-    border-radius: 16px;
-    background: var(--white);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card);
 }
 
 .stat-card h3 {
-    font-size: 1.8rem;
-    margin-top: 5px;
+    font-size: 1.6rem;
+    letter-spacing: -1px;
 }
 
-/* --- FORM & PANEL --- */
+/* --- FORM & INPUT --- */
 .card {
+    border-radius: 18px;
     border: none;
-    border-radius: 20px;
-    box-shadow: var(--shadow-sm);
-}
-
-.card-header {
-    background-color: transparent !important;
-    padding: 20px !important;
+    box-shadow: var(--shadow-card);
 }
 
 .form-control, .form-select {
-    border: 1.5px solid #e2e8f0;
+    border: 2px solid #f1f5f9;
     border-radius: 12px;
     padding: 10px 15px;
     font-size: 0.9rem;
-    transition: all 0.2s;
+    font-weight: 500;
 }
 
 .form-control:focus, .form-select:focus {
@@ -82,96 +93,82 @@ body.enterprise-bg {
     box-shadow: 0 0 0 4px rgba(3, 105, 161, 0.1);
 }
 
-/* --- TABEL CUSTOM --- */
-.table-responsive {
-    border-radius: 15px;
-}
-
+/* --- TABEL RIWAYAT --- */
 .table thead th {
     background-color: #f8fafc;
-    color: var(--secondary);
+    color: var(--text-muted);
     font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
     padding: 15px;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid #f1f5f9;
 }
 
 .table tbody td {
-    padding: 18px 15px;
+    padding: 15px;
     font-size: 0.85rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f8fafc;
 }
 
-/* --- BADGE DUA TANGGAL --- */
-.tgl-nota-badge {
+/* Badge untuk Jenis Perbaikan di Tabel */
+.badge-jenis {
+    background-color: var(--primary-light);
     color: var(--primary);
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+}
+
+/* Penataan Tanggal di Tabel */
+.tgl-nota-badge {
     font-weight: 800;
-    font-size: 0.9rem;
+    color: var(--primary);
     display: block;
 }
 
 .tgl-input-badge {
-    color: #94a3b8;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
+    color: var(--text-muted);
     font-style: italic;
     display: block;
-    margin-top: 3px;
-    background: #f1f5f9;
-    padding: 2px 8px;
-    border-radius: 6px;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-/* --- KOMPONEN TAMBAHAN --- */
-.badge-jenis {
-    background-color: #e0f2fe;
-    color: var(--primary);
-    font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-}
-
+/* --- TOMBOL --- */
 .btn-primary {
-    background: var(--primary);
+    background-color: var(--primary);
     border: none;
     border-radius: 12px;
-    padding: 12px;
-    font-weight: 700;
-    transition: 0.3s;
+    transition: all 0.3s;
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
-    box-shadow: 0 4px 12px rgba(3, 105, 161, 0.3);
+    background-color: var(--primary-dark);
+    transform: scale(1.02);
 }
 
 .btn-success {
     background-color: var(--success);
     border: none;
-    border-radius: 12px;
-}
-
-/* --- ANIMASI --- */
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#tabelNota tr {
-    animation: slideIn 0.3s ease-out forwards;
+    border-radius: 10px;
 }
 
 /* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .h-100 { height: auto !important; }
+}
+
 @media (max-width: 768px) {
-    .stat-card {
-        margin-bottom: 15px;
-    }
-    
-    .tgl-input-badge {
-        margin: 5px auto;
-    }
+    .navbar-brand { font-size: 1.1rem; }
+    #statBulanIni { font-size: 2rem; }
+}
+
+/* Animasi Entry Data Baru */
+@keyframes highlight {
+    0% { background-color: #fef08a; }
+    100% { background-color: transparent; }
+}
+
+.row-new {
+    animation: highlight 2s ease-out;
 }
